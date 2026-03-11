@@ -1,0 +1,54 @@
+{
+  "mcu_module": "ESP32-S3-WROOM-1U",
+  "source_sheet": "ESP32 S3 WROOM 1U Core (page 4)",
+  "gpio_map": [
+    { "gpio": 0, "net": "ESP_GPIO0", "sheet_refs": ["BOOT Button (GPIO0) SW2"] },
+    { "gpio": 1, "net": "LD_TMO", "sheet_refs": ["LD_Controller"] },
+    { "gpio": 2, "net": "LD_LIO", "sheet_refs": ["LD_Controller"] },
+    { "gpio": 3, "net": "GPIO_3", "sheet_refs": ["TP2"] },
+    { "gpio": 4, "net": "ESP_GPIO4", "sheet_refs": ["Connectors ESP_GPIO4"] },
+    { "gpio": 5, "net": "ESP_GPIO5", "sheet_refs": ["Connectors ESP_GPIO5"] },
+    { "gpio": 6, "net": "ESP_GPIO6", "sheet_refs": ["Connectors ESP_GPIO6"] },
+    { "gpio": 7, "net": "ESP_GPIO7", "sheet_refs": ["Connectors ESP_GPIO7"] },
+    { "gpio": 8, "net": "TEC_TMO", "sheet_refs": ["TEC_Controller"] },
+    { "gpio": 9, "net": "TEC_ITEC", "sheet_refs": ["TEC_Controller"] },
+    { "gpio": 10, "net": "TEC_VTEC", "sheet_refs": ["TEC_Controller"] },
+    { "gpio": 11, "net": "DAC_SDA", "sheet_refs": ["DAC"] },
+    { "gpio": 12, "net": "DAC_SCL", "sheet_refs": ["DAC"] },
+    { "gpio": 13, "net": "LD_SBDN", "sheet_refs": ["LD_Controller"] },
+    { "gpio": 14, "net": "LD_LPGD", "sheet_refs": ["LD_Controller"] },
+    { "gpio": 15, "net": "PWR_TEC_EN", "sheet_refs": ["Digital_Supply_TEC-Driver"] },
+    { "gpio": 16, "net": "PWR_TEC_GOOD", "sheet_refs": ["Digital_Supply_TEC-Driver"] },
+    { "gpio": 17, "net": "PWR_LD_EN", "sheet_refs": ["Digital_Supply_LD-Driver"] },
+    { "gpio": 18, "net": "PWR_LD_PGOOD", "sheet_refs": ["Digital_Supply_LD-Driver"] },
+    { "gpio": 21, "net": "LD-PCN", "sheet_refs": ["LD_Controller"] },
+    { "gpio": 35, "net": "ERM_SDA", "sheet_refs": ["Motor_Driver"] },
+    { "gpio": 36, "net": "ERM_SCL", "sheet_refs": ["Motor_Driver"] },
+    {
+      "gpio": 37,
+      "net": "ERM_TRIG",
+      "sheet_refs": ["Motor_Driver", "VisibleLaser-Switch GN_LD_EN"],
+      "net_aliases_on_same_node": ["GN_LD_EN"]
+    },
+    { "gpio": 38, "net": "IMU_SDA-SDI", "sheet_refs": ["IMU"] },
+    { "gpio": 39, "net": "IMU_CS", "sheet_refs": ["IMU"] },
+    { "gpio": 40, "net": "IMU_SCL-SCLK", "sheet_refs": ["IMU"] },
+    { "gpio": 41, "net": "IMU_SDO", "sheet_refs": ["IMU"] },
+    { "gpio": 42, "net": "IMU_INT2", "sheet_refs": ["IMU"] },
+    { "gpio": 45, "net": "GPIO_45", "sheet_refs": ["TP1"] },
+    { "gpio": 46, "net": "ESP_GPIO46", "sheet_refs": ["BOOT Option (GPIO46) R21"] },
+    { "gpio": 47, "net": "TEC_TEMPGD", "sheet_refs": ["TEC_Controller"] },
+    { "gpio": 48, "net": "ERM_EN", "sheet_refs": ["Motor_Driver"] }
+  ],
+  "usb": [
+    { "mcu_pin": "IO20", "net": "ESP_D_P", "sheet_refs": ["Connectors ESP_USP-DP"] },
+    { "mcu_pin": "IO19", "net": "ESP_D_N", "sheet_refs": ["Connectors ESP_USP-DN"] }
+  ],
+  "uart0": [
+    { "mcu_pin": "RXD0", "net": "ESP_RX", "sheet_refs": ["TP15"] },
+    { "mcu_pin": "TXD0", "net": "ESP_TX", "sheet_refs": ["TP14"] }
+  ],
+  "enable": [
+    { "mcu_pin": "EN", "net": "ESP_EN", "sheet_refs": ["SW1 RST Button", "R19 pull-up", "C38"] }
+  ]
+}

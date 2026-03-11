@@ -1,0 +1,23 @@
+{
+  "page_number": 11,
+  "page_title": "Visible Laser Load Switch",
+  "modules": [
+    {
+      "ref": "U9",
+      "value": "TPS22918DBVR",
+      "pins": [
+        { "pin_number": "1", "pin_name": "VIN", "net": "VDS_TEC_5V0" },
+        { "pin_number": "3", "pin_name": "ON", "net": "GN_LD_EN", "sheet_refs": ["ESP32_S3_Module[3C] GN_LD_EN"] },
+        { "pin_number": "2", "pin_name": "GND", "net": "GND" },
+        { "pin_number": "6", "pin_name": "VOUT", "net": "VISIBLE_LASER_OUT" },
+        { "pin_number": "5", "pin_name": "QOD", "net": "QOD" },
+        { "pin_number": "4", "pin_name": "CT", "net": null }
+      ]
+    }
+  ],
+  "test_points": [
+    { "ref": "TP18", "value": "5190tr", "net": "VISIBLE_LASER_OUT" },
+    { "ref": "TP20", "value": "5190tr", "net": "GND" }
+  ]
+}
+

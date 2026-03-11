@@ -1,0 +1,25 @@
+{
+  "page_number": 2,
+  "page_title": "Digital Supply to Laser Controller",
+  "modules": [
+    {
+      "ref": "U5A",
+      "value": "MPM3530GRF",
+      "pins": [
+        { "pin_number": "40", "pin_name": "EN", "net": "PWR_LD_EN", "sheet_refs": ["ESP32_S3_Module[3B] PWR_LD_EN"] },
+        { "pin_number": "31", "pin_name": "PG", "net": "PWR_LD_PGOOD", "sheet_refs": ["ESP32_S3_Module[3B] PWR_LD_PGOOD"] },
+        { "pin_number": "17", "pin_name": "OUT", "net": "VDS_LD_8V0" },
+        { "pin_number": "29", "pin_name": "VDD", "net": "MPM_2_VDD_USB" },
+        { "pin_name": "VIN", "net": "VIN" },
+        { "pin_name": "AGND", "net": "AGND" },
+        { "pin_name": "PGND", "net": "GND" }
+      ]
+    }
+  ],
+  "notes_from_sheet": [
+    "EN is pulled low for always OFF supply; ESP32 can turn it ON once conditions are met",
+    "Output set to 8V",
+    "f_SW set to 300kHz (R_SW=178k); if unstable at low input voltage (~9V), increase R_SW to lower the SW freq; avoid 500kHz to prevent heating issue with LD Driver"
+  ]
+}
+

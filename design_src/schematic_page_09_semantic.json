@@ -1,0 +1,28 @@
+{
+  "page_number": 9,
+  "page_title": "DAC for TEC/LD Settings",
+  "modules": [
+    {
+      "ref": "U7",
+      "value": "DAC80502DRXR",
+      "i2c_slave_addr_note": "1001000",
+      "pins": [
+        { "pin_number": "1", "pin_name": "VDD", "net": "DVDD_3V3" },
+        { "pin_number": "8", "pin_name": "SCL/SCL", "net": "DAC_SCL", "sheet_refs": ["ESP32_S3_Module[1C] DAC_SCL"] },
+        { "pin_number": "7", "pin_name": "SDIN/SDA", "net": "DAC_SDA", "sheet_refs": ["ESP32_S3_Module[1C] DAC_SDA"] },
+        { "pin_number": "2", "pin_name": "VOUTA", "net": "DAC_OUTA", "sheet_refs": ["LD_Controller[1B] DAC_OUTA"] },
+        { "pin_number": "9", "pin_name": "VOUTB", "net": "DAC_OUTB", "sheet_refs": ["TEC_Controller[1B] DAC_OUTB"] },
+        { "pin_number": "10", "pin_name": "VREFIO", "net": "VREFIO" },
+        { "pin_number": "4", "pin_name": "AGND", "net": "GND" }
+      ]
+    }
+  ],
+  "notes_from_sheet": [
+    "Power-ON behavior (Default to zero scale): Populate at R41 for power up to midscale; Populate at R42 for power up to zero scale; Never populate them together",
+    "SPI2C pulled HIGH for I2C operation",
+    "A0 pulled LOW to set slave I2C address to 1001000",
+    "At least set BUFF-GAIN and REF-DIV to 1 (Range: 0-2.5V)",
+    "Lower I2C pull-up resistance if frequency above 200kHz"
+  ]
+}
+

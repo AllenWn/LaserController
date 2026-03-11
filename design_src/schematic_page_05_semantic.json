@@ -1,0 +1,31 @@
+{
+  "page_number": 5,
+  "page_title": "IMU Module LSM6DSOTR",
+  "modules": [
+    {
+      "ref": "U1",
+      "value": "LSM6DSOTR",
+      "pins": [
+        { "pin_number": "8", "pin_name": "VDD", "net": "DVDD_3V3" },
+        { "pin_number": "5", "pin_name": "VDDIO", "net": "DVDD_3V3" },
+        { "pin_number": "12", "pin_name": "CS", "net": "IMU_CS", "sheet_refs": ["ESP32_S3_Module[3B] IMU_CS"] },
+        { "pin_number": "13", "pin_name": "SCX", "net": "IMU_SCL-SCLK", "sheet_refs": ["ESP32_S3_Module[3B] IMU_SCL-SCLK"] },
+        { "pin_number": "14", "pin_name": "SDX", "net": "IMU_SDA-SDI", "sheet_refs": ["ESP32_S3_Module[3B] IMU_SDA-SDI"] },
+        { "pin_number": "1", "pin_name": "SDO/SA0", "net": "IMU_SDO", "sheet_refs": ["ESP32_S3_Module[3B] IMU_SDO"] },
+        { "pin_number": "9", "pin_name": "INT2", "net": "IMU_INT2", "sheet_refs": ["ESP32_S3_Module[3B] IMU_INT2"] },
+        { "pin_number": "4", "pin_name": "INT1", "net": null },
+        { "pin_number": "10", "pin_name": "OCS_AUX", "net": null },
+        { "pin_number": "6", "pin_name": "GND", "net": "GND" },
+        { "pin_number": "7", "pin_name": "GND", "net": "GND" }
+      ]
+    }
+  ],
+  "notes_from_sheet": [
+    "CS is active low for SPI; active high for I2C",
+    "Connection Mode: Mode 1 is used for direct connection to ESP32",
+    "INT1 left floating to force I2C operation (instead of I3C, in I2C/I3C mode)",
+    "SDO/SA0 pulled low for I2C mode least significant bit to 0",
+    "Populate R22 ~ R26 for I2C operation"
+  ]
+}
+

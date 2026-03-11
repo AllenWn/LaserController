@@ -1,0 +1,25 @@
+{
+  "page_number": 10,
+  "page_title": "Haptic Motor Driver",
+  "modules": [
+    {
+      "ref": "U8",
+      "value": "DRV2605YZFR",
+      "i2c_slave_addr_note": "1011010",
+      "pins": [
+        { "pin_name": "EN", "net": "ERM_EN", "sheet_refs": ["ESP32_S3_Module[3B] ERM_EN"] },
+        { "pin_name": "IN/TRIG", "net": "ERM_TRIG", "sheet_refs": ["ESP32_S3_Module[3B] ERM_TRIG"] },
+        { "pin_name": "SCL", "net": "ERM_SCL", "sheet_refs": ["ESP32_S3_Module[3B] ERM_SCL"] },
+        { "pin_name": "SDA", "net": "ERM_SDA", "sheet_refs": ["ESP32_S3_Module[3B] ERM_SDA"] },
+        { "pin_name": "VDD", "net": "DVDD_3V3" },
+        { "pin_name": "GND", "net": "GND" },
+        { "pin_name": "OUT+", "net": "MOTOR_OUT_P" },
+        { "pin_name": "OUT-", "net": "MOTOR_OUT_N" }
+      ]
+    }
+  ],
+  "loads": [
+    { "ref": "M1", "value": "HD-EMC1004-SC", "nets": ["MOTOR_OUT_P", "MOTOR_OUT_N"] }
+  ]
+}
+

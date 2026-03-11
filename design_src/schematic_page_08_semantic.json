@@ -1,0 +1,54 @@
+{
+  "page_number": 8,
+  "page_title": "External Connection",
+  "connectors": [
+    {
+      "ref": "J1",
+      "value": "TFM-105-12-L-D-A",
+      "section": "B2B - VIN Board",
+      "pins": [
+        { "pin": "01", "net": "ESP_GPIO4", "sheet_refs": ["ESP32_S3_Module[1C] GPIO4"] },
+        { "pin": "03", "net": "ESP_GPIO5", "sheet_refs": ["ESP32_S3_Module[1C] GPIO5"] },
+        { "pin": "05", "net": "ESP_GPIO7", "sheet_refs": ["ESP32_S3_Module[1C] GPIO7"] },
+        { "pin": "09", "net": "GND" },
+        { "pin": "02", "net": "ESP_USP-DP", "sheet_refs": ["ESP32_S3_Module[1B] ESP_D_P"] },
+        { "pin": "04", "net": "ESP_USP-DN", "sheet_refs": ["ESP32_S3_Module[1B] ESP_D_N"] },
+        { "pin": "06", "net": "DIFF90" },
+        { "pin": "08", "net": "ESP_GPIO6", "sheet_refs": ["ESP32_S3_Module[1C] GPIO6"] },
+        { "pin": "10", "net": "VIN" }
+      ]
+    },
+    {
+      "ref": "J2A",
+      "value": "FTSH-105-01-L-DV-K-TR",
+      "section": "B2B - Sensor & LED Board",
+      "pins": [
+        { "pin": "1", "net": "ESP_GPIO4" },
+        { "pin": "3", "net": "ESP_GPIO5" },
+        { "pin": "5", "net": "ESP_GPIO6", "net_aliases_on_same_node": ["ESP_GPIO7"] },
+        { "pin": "7", "net": "DVDD_3V3" },
+        { "pin": "9", "net": "GND" }
+      ]
+    },
+    {
+      "ref": "J2B",
+      "value": "FTSH-105-01-L-DV-K-TR",
+      "section": "B2B - Sensor & LED Board",
+      "pins": [
+        { "pin": "2", "net": "ESP_GPIO4" },
+        { "pin": "4", "net": "ESP_GPIO5" },
+        { "pin": "6", "net": "ESP_GPIO6", "net_aliases_on_same_node": ["ESP_GPIO7"] },
+        { "pin": "8", "net": "DVDD_3V3" },
+        { "pin": "10", "net": "GND" }
+      ]
+    }
+  ],
+  "test_points": [
+    { "ref": "TP9", "net": "VIN" },
+    { "ref": "TP10", "net": "DVDD_3V3" },
+    { "ref": "TP11", "net": "VDS_TEC_5V0" },
+    { "ref": "TP12", "net": "VDS_LD_8V0" },
+    { "ref": "TP13", "net": "GND" }
+  ]
+}
+

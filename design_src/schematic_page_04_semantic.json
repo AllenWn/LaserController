@@ -1,0 +1,70 @@
+{
+  "page_number": 4,
+  "page_title": "ESP32 S3 WROOM 1U Core",
+  "modules": [
+    {
+      "ref": "IC1",
+      "value": "ESP32-S3-WROOM-1U",
+      "pins": [
+        { "pin_name": "EN", "net": "ESP_EN" },
+        { "pin_name": "RXD0", "net": "ESP_RX" },
+        { "pin_name": "TXD0", "net": "ESP_TX" },
+        { "pin_name": "IO19", "net": "ESP_D_N", "sheet_refs": ["Connectors[2B] ESP_USP-DN"] },
+        { "pin_name": "IO20", "net": "ESP_D_P", "sheet_refs": ["Connectors[2B] ESP_USP-DP"] },
+        { "pin_name": "IO0", "net": "ESP_GPIO0" },
+        { "pin_name": "IO46", "net": "ESP_GPIO46" },
+        { "pin_name": "IO45", "net": "GPIO_45", "sheet_refs": ["TP1"] },
+        { "pin_name": "IO3", "net": "GPIO_3", "sheet_refs": ["TP2"] },
+        { "pin_name": "IO1", "net": "LD_TMO", "sheet_refs": ["LD_Controller[1B] LD-TMO"] },
+        { "pin_name": "IO2", "net": "LD_LIO", "sheet_refs": ["LD_Controller[1B] LD-LIO"] },
+        { "pin_name": "IO4", "net": "ESP_GPIO4", "sheet_refs": ["Connectors[1B] ESP_GPIO4"] },
+        { "pin_name": "IO5", "net": "ESP_GPIO5", "sheet_refs": ["Connectors[1B] ESP_GPIO5"] },
+        { "pin_name": "IO6", "net": "ESP_GPIO6", "sheet_refs": ["Connectors[2B] ESP_GPIO6"] },
+        { "pin_name": "IO7", "net": "ESP_GPIO7", "sheet_refs": ["Connectors[1B] ESP_GPIO7"] },
+        { "pin_name": "IO8", "net": "TEC_TMO", "sheet_refs": ["TEC_Controller[4B] TEC_TMO"] },
+        { "pin_name": "IO9", "net": "TEC_ITEC", "sheet_refs": ["TEC_Controller[3B] TEC_ITEC"] },
+        { "pin_name": "IO10", "net": "TEC_VTEC", "sheet_refs": ["TEC_Controller[3B] TEC_VTEC"] },
+        { "pin_name": "IO11", "net": "DAC_SDA", "sheet_refs": ["DAC[1B] DAC_SDA"] },
+        { "pin_name": "IO12", "net": "DAC_SCL", "sheet_refs": ["DAC[1B] DAC_SCL"] },
+        { "pin_name": "IO13", "net": "LD_SBDN", "sheet_refs": ["LD_Controller[4A] LD_SBDN"] },
+        { "pin_name": "IO14", "net": "LD_LPGD", "sheet_refs": ["LD_Controller[1C] LD-LPGD"] },
+        { "pin_name": "IO15", "net": "PWR_TEC_EN", "sheet_refs": ["Digital_Supply_TEC-Driver[1B] PWR_TEC_EN"] },
+        { "pin_name": "IO16", "net": "PWR_TEC_GOOD", "sheet_refs": ["Digital_Supply_TEC-Driver[1B] PWR_TEC_GOOD"] },
+        { "pin_name": "IO17", "net": "PWR_LD_EN", "sheet_refs": ["Digital_Supply_LD-Driver[1B] PWR_LD_EN"] },
+        { "pin_name": "IO18", "net": "PWR_LD_PGOOD", "sheet_refs": ["Digital_Supply_LD-Driver[1B] PWR_LD_PGOOD"] },
+        { "pin_name": "IO21", "net": "LD-PCN", "sheet_refs": ["LD_Controller[1C] LD-PCN"] },
+        { "pin_name": "IO35", "net": "ERM_SDA", "sheet_refs": ["Motor_Driver[1B] ERM_SDA"] },
+        { "pin_name": "IO36", "net": "ERM_SCL", "sheet_refs": ["Motor_Driver[1B] ERM_SCL"] },
+        {
+          "pin_name": "IO37",
+          "net": "ERM_TRIG",
+          "sheet_refs": ["Motor_Driver[1B] ERM_TRIG", "VisibleLaser-Switch[1B] GN_LD_EN"],
+          "net_aliases_on_same_node": ["GN_LD_EN"]
+        },
+        { "pin_name": "IO38", "net": "IMU_SDA-SDI", "sheet_refs": ["IMU[1B] IMU_SDA-SDI"] },
+        { "pin_name": "IO39", "net": "IMU_CS", "sheet_refs": ["IMU[1B] IMU_CS"] },
+        { "pin_name": "IO40", "net": "IMU_SCL-SCLK", "sheet_refs": ["IMU[1B] IMU_SCL-SCLK"] },
+        { "pin_name": "IO41", "net": "IMU_SDO", "sheet_refs": ["IMU[1B] IMU_SDO"] },
+        { "pin_name": "IO42", "net": "IMU_INT2", "sheet_refs": ["IMU[4B] IMU_INT2"] },
+        { "pin_name": "IO47", "net": "TEC_TEMPGD", "sheet_refs": ["TEC_Controller[3B] TEC_TEMPGD"] },
+        { "pin_name": "IO48", "net": "ERM_EN", "sheet_refs": ["Motor_Driver[1B] ERM_EN"] }
+      ]
+    }
+  ],
+  "discretes": [
+    { "ref": "SW1", "value": "EVQ-PLKA08", "function": "RST Button", "nets": ["ESP_EN", "GND"] },
+    { "ref": "R19", "value": "10k0", "nets": ["DVDD_3V3", "ESP_EN"] },
+    { "ref": "C38", "value": "1uF", "nets": ["ESP_EN", "GND"] },
+    { "ref": "SW2", "value": "EVQ-PLKA08", "function": "BOOT Button (GPIO0)", "nets": ["ESP_GPIO0", "GND"] },
+    { "ref": "R20", "value": "10k0", "nets": ["DVDD_3V3", "ESP_GPIO0"] },
+    { "ref": "R21", "value": "10k0 (DNP)", "function": "BOOT Option (GPIO46)", "nets": ["DVDD_3V3", "ESP_GPIO46"] }
+  ],
+  "test_points": [
+    { "ref": "TP14", "value": "5190tr", "net": "ESP_TX" },
+    { "ref": "TP15", "value": "5190tr", "net": "ESP_RX" },
+    { "ref": "TP16", "value": "5190tr", "net": "ESP_GPIO0" },
+    { "ref": "TP17", "value": "5190tr", "net": "ESP_EN" },
+    { "ref": "TP1", "net": "GPIO_45" },
+    { "ref": "TP2", "net": "GPIO_3" }
+  ]
+}
