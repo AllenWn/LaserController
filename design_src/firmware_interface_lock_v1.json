@@ -1,0 +1,518 @@
+{
+  "document": "firmware_interface_lock",
+  "version": "v1",
+  "mcu": "ESP32-S3-WROOM-1U",
+  "source": [
+    "design_src/schematic_page_04_semantic.json",
+    "design_src/schematic_page_05_semantic.json",
+    "design_src/schematic_page_06_semantic.json",
+    "design_src/schematic_page_07_semantic.json",
+    "design_src/schematic_page_08_semantic.json",
+    "design_src/schematic_page_09_semantic.json",
+    "design_src/schematic_page_10_semantic.json",
+    "design_src/schematic_page_11_semantic.json",
+    "design_src/datasheet_notes/*.md"
+  ],
+  "rules": {
+    "strapping_pins_reserved": [
+      "GPIO0",
+      "GPIO46"
+    ],
+    "fail_safe_default": "all safety conditions false until proven valid",
+    "output_default": "laser-related outputs disabled at boot",
+    "unknown_field_policy": "use 'tbd' and verify on hardware"
+  },
+  "distance_sensor_status": {
+    "dedicated_distance_chip_on_main_board": false,
+    "notes": [
+      "No explicit distance-sensor IC/net found in current 11-page main schematic set.",
+      "External connector GPIOs exist and can be assigned later for an external distance board."
+    ],
+    "candidate_reserved_ios": [
+      {
+        "gpio": 4,
+        "net": "ESP_GPIO4",
+        "connector_refs": [
+          "J1",
+          "J2A",
+          "J2B"
+        ]
+      },
+      {
+        "gpio": 5,
+        "net": "ESP_GPIO5",
+        "connector_refs": [
+          "J1",
+          "J2A",
+          "J2B"
+        ]
+      },
+      {
+        "gpio": 6,
+        "net": "ESP_GPIO6",
+        "connector_refs": [
+          "J1",
+          "J2A",
+          "J2B"
+        ]
+      },
+      {
+        "gpio": 7,
+        "net": "ESP_GPIO7",
+        "connector_refs": [
+          "J1",
+          "J2A",
+          "J2B"
+        ]
+      }
+    ]
+  },
+  "interfaces": [
+    {
+      "gpio": 15,
+      "net": "PWR_TEC_EN",
+      "module": "Digital_Supply_TEC-Driver",
+      "direction": "output",
+      "kind": "power_enable",
+      "active_level": "high_enable",
+      "safety_class": "safety_critical",
+      "processing": "state_machine + safety_task",
+      "boot_default": "low",
+      "notes": "Power rail enable for TEC domain."
+    },
+    {
+      "gpio": 16,
+      "net": "PWR_TEC_GOOD",
+      "module": "Digital_Supply_TEC-Driver",
+      "direction": "input",
+      "kind": "power_good_status",
+      "active_level": "high_good_open_drain",
+      "safety_class": "safety_critical",
+      "processing": "polling_in_sensor_task",
+      "boot_default": "input_pullup_or_external_pullup",
+      "notes": "PG output expected open-drain per regulator family."
+    },
+    {
+      "gpio": 17,
+      "net": "PWR_LD_EN",
+      "module": "Digital_Supply_LD-Driver",
+      "direction": "output",
+      "kind": "power_enable",
+      "active_level": "high_enable",
+      "safety_class": "safety_critical",
+      "processing": "state_machine + safety_task",
+      "boot_default": "low",
+      "notes": "Power rail enable for LD domain."
+    },
+    {
+      "gpio": 18,
+      "net": "PWR_LD_PGOOD",
+      "module": "Digital_Supply_LD-Driver",
+      "direction": "input",
+      "kind": "power_good_status",
+      "active_level": "high_good_open_drain",
+      "safety_class": "safety_critical",
+      "processing": "polling_in_sensor_task",
+      "boot_default": "input_pullup_or_external_pullup",
+      "notes": "PG output expected open-drain per regulator family."
+    },
+    {
+      "gpio": 47,
+      "net": "TEC_TEMPGD",
+      "module": "TEC_Controller",
+      "direction": "input",
+      "kind": "temperature_good_status",
+      "active_level": "high_good_verify_on_hardware",
+      "safety_class": "safety_critical",
+      "processing": "polling_in_sensor_task",
+      "boot_default": "input",
+      "notes": "Primary TEC safety status candidate."
+    },
+    {
+      "gpio": 14,
+      "net": "LD_LPGD",
+      "module": "LD_Controller",
+      "direction": "input",
+      "kind": "loop_good_status",
+      "active_level": "high_good",
+      "safety_class": "safety_critical",
+      "processing": "polling_in_sensor_task",
+      "boot_default": "input",
+      "notes": "ATLS6A214D LPGD indicates loop status."
+    },
+    {
+      "gpio": 13,
+      "net": "LD_SBDN",
+      "module": "LD_Controller",
+      "direction": "output",
+      "kind": "state_control",
+      "active_level": "three_level_control",
+      "safety_class": "safety_critical",
+      "processing": "state_machine + dedicated_ld_control",
+      "boot_default": "shutdown_level",
+      "notes": "ATLS6A214D SBDN: shutdown/standby/operation by level."
+    },
+    {
+      "gpio": 21,
+      "net": "LD-PCN",
+      "module": "LD_Controller",
+      "direction": "output",
+      "kind": "setpoint_bank_select",
+      "active_level": "low=LISL high=LISH",
+      "safety_class": "functional",
+      "processing": "ld_control_task",
+      "boot_default": "low",
+      "notes": "Selects low/high current-set bank in LD driver."
+    },
+    {
+      "gpio": 1,
+      "net": "LD_TMO",
+      "module": "LD_Controller",
+      "direction": "input",
+      "kind": "monitor_signal",
+      "active_level": "analog_voltage_temperature_monitor",
+      "safety_class": "functional",
+      "processing": "adc_sampling_task (if used)",
+      "boot_default": "input",
+      "notes": "ATLS6A214D TMO is an analog temperature monitor (see datasheet for V<->T relationship). Requires ADC-capable pin + analog path review; not a digital good/bad input."
+    },
+    {
+      "gpio": 2,
+      "net": "LD_LIO",
+      "module": "LD_Controller",
+      "direction": "input",
+      "kind": "monitor_signal",
+      "active_level": "analog_voltage_current_monitor",
+      "safety_class": "functional",
+      "processing": "adc_sampling_task (if used)",
+      "boot_default": "input",
+      "notes": "ATLS6A214D LIO is an analog current monitor: V_LIO = (I_OUT/6A)*2.5V (0A->0V, 6A->2.5V). Requires ADC-capable pin + analog path review; not a digital good/bad input."
+    },
+    {
+      "gpio": 8,
+      "net": "TEC_TMO",
+      "module": "TEC_Controller",
+      "direction": "input",
+      "kind": "monitor_signal",
+      "active_level": "analog_voltage_temperature_monitor",
+      "safety_class": "functional",
+      "processing": "adc_sampling_task (if used)",
+      "boot_default": "input",
+      "notes": "TEC14M5V3R5AS TMO is an analog object temperature indication (datasheet: 0.1V–2.5V covers default network range). Requires ADC-capable pin + analog path review; not a digital good/bad input."
+    },
+    {
+      "gpio": 9,
+      "net": "TEC_ITEC",
+      "module": "TEC_Controller",
+      "direction": "input",
+      "kind": "monitor_signal",
+      "active_level": "analog_voltage_current_monitor",
+      "safety_class": "functional",
+      "processing": "adc_sampling_task (if used)",
+      "boot_default": "input",
+      "notes": "TEC14M5V3R5AS ITEC is an analog current output: ITEC = (V_ITEC - 1.25)/0.285 (see datasheet pin table). Requires ADC-capable pin + analog path review; not a digital good/bad input."
+    },
+    {
+      "gpio": 10,
+      "net": "TEC_VTEC",
+      "module": "TEC_Controller",
+      "direction": "input",
+      "kind": "monitor_signal",
+      "active_level": "analog_voltage_monitor",
+      "safety_class": "functional",
+      "processing": "adc_sampling_task (if used)",
+      "boot_default": "input",
+      "notes": "TEC14M5V3R5AS VTEC is an analog TEC voltage indication. Scaling/limits must be confirmed from datasheet + board analog path; not a digital good/bad input."
+    },
+    {
+      "gpio": 38,
+      "net": "IMU_SDA-SDI",
+      "module": "IMU (LSM6DSO)",
+      "direction": "bidir_or_input_by_mode",
+      "kind": "imu_bus_data_in",
+      "active_level": "digital",
+      "safety_class": "safety_critical",
+      "processing": "bus_driver + sensor_task",
+      "boot_default": "input",
+      "notes": "Part of IMU serial bus. Current wiring indicates SPI-style net naming."
+    },
+    {
+      "gpio": 40,
+      "net": "IMU_SCL-SCLK",
+      "module": "IMU (LSM6DSO)",
+      "direction": "output",
+      "kind": "imu_bus_clock",
+      "active_level": "digital",
+      "safety_class": "safety_critical",
+      "processing": "bus_driver + sensor_task",
+      "boot_default": "input_or_idle_low_tbd",
+      "notes": "Part of IMU serial bus."
+    },
+    {
+      "gpio": 39,
+      "net": "IMU_CS",
+      "module": "IMU (LSM6DSO)",
+      "direction": "output",
+      "kind": "imu_chip_select_or_mode_select",
+      "active_level": "spi_cs_active_low",
+      "safety_class": "safety_critical",
+      "processing": "bus_driver + sensor_task",
+      "boot_default": "high",
+      "notes": "CS high enables I2C mode; CS low enables SPI mode per LSM6DSO datasheet."
+    },
+    {
+      "gpio": 41,
+      "net": "IMU_SDO",
+      "module": "IMU (LSM6DSO)",
+      "direction": "input_or_address_pin",
+      "kind": "imu_bus_data_out_or_i2c_sa0",
+      "active_level": "digital",
+      "safety_class": "safety_critical",
+      "processing": "bus_driver + sensor_task",
+      "boot_default": "input",
+      "notes": "In SPI mode this is SDO; in I2C mode behaves as SA0 strap."
+    },
+    {
+      "gpio": 42,
+      "net": "IMU_INT2",
+      "module": "IMU (LSM6DSO)",
+      "direction": "input",
+      "kind": "interrupt_line",
+      "active_level": "configurable_in_imu",
+      "safety_class": "safety_critical",
+      "processing": "optional_interrupt + sensor_task",
+      "boot_default": "input",
+      "notes": "Can be used for data-ready/event wakeup. LSM6DSO INT polarity/driver are configurable (CTRL3_C: H_LACTIVE, PP_OD); defaults are active-high, push-pull."
+    },
+    {
+      "gpio": 11,
+      "net": "DAC_SDA",
+      "module": "DAC80502",
+      "direction": "bidir",
+      "kind": "i2c_data",
+      "active_level": "open_drain",
+      "safety_class": "functional",
+      "processing": "i2c_driver",
+      "boot_default": "input",
+      "notes": "DAC control bus."
+    },
+    {
+      "gpio": 12,
+      "net": "DAC_SCL",
+      "module": "DAC80502",
+      "direction": "output_open_drain",
+      "kind": "i2c_clock",
+      "active_level": "open_drain",
+      "safety_class": "functional",
+      "processing": "i2c_driver",
+      "boot_default": "input",
+      "notes": "DAC control bus."
+    },
+    {
+      "gpio": 35,
+      "net": "ERM_SDA",
+      "module": "DRV2605",
+      "direction": "bidir",
+      "kind": "i2c_data",
+      "active_level": "open_drain",
+      "safety_class": "non_safety",
+      "processing": "i2c_driver",
+      "boot_default": "input",
+      "notes": "Haptic driver I2C."
+    },
+    {
+      "gpio": 36,
+      "net": "ERM_SCL",
+      "module": "DRV2605",
+      "direction": "output_open_drain",
+      "kind": "i2c_clock",
+      "active_level": "open_drain",
+      "safety_class": "non_safety",
+      "processing": "i2c_driver",
+      "boot_default": "input",
+      "notes": "Haptic driver I2C."
+    },
+    {
+      "gpio": 48,
+      "net": "ERM_EN",
+      "module": "DRV2605",
+      "direction": "output",
+      "kind": "enable",
+      "active_level": "high_enable",
+      "safety_class": "non_safety",
+      "processing": "ui_feedback_task",
+      "boot_default": "low",
+      "notes": "Haptic enable."
+    },
+    {
+      "gpio": 37,
+      "net": "ERM_TRIG",
+      "module": "DRV2605 + TPS22918 shared node",
+      "direction": "output",
+      "kind": "shared_control",
+      "active_level": "drv2605_trigger_rising_edge_or_level (mode-dependent)",
+      "safety_class": "safety_critical_conflict",
+      "processing": "special_handling_required",
+      "boot_default": "low",
+      "notes": "Same node also aliases GN_LD_EN (visible laser load switch ON). DRV2605 IN/TRIG meaning depends on mode: edge mode triggers on low->high; level mode GO mirrors pin. Must resolve in firmware architecture."
+    },
+    {
+      "gpio": 0,
+      "net": "ESP_GPIO0",
+      "module": "Boot",
+      "direction": "strapping",
+      "kind": "boot_mode",
+      "active_level": "strap_sampled_at_reset",
+      "safety_class": "reserved",
+      "processing": "do_not_use_runtime_control",
+      "boot_default": "weak_pullup_internal + external pullup",
+      "notes": "Connected to BOOT button."
+    },
+    {
+      "gpio": 46,
+      "net": "ESP_GPIO46",
+      "module": "Boot",
+      "direction": "strapping",
+      "kind": "boot_mode",
+      "active_level": "strap_sampled_at_reset",
+      "safety_class": "reserved",
+      "processing": "do_not_use_runtime_control",
+      "boot_default": "weak_pulldown_internal",
+      "notes": "Boot option net with optional external resistor."
+    },
+    {
+      "gpio": 3,
+      "net": "GPIO_3",
+      "module": "testpoint",
+      "direction": "tbd",
+      "kind": "unassigned",
+      "active_level": "tbd",
+      "safety_class": "unassigned",
+      "processing": "none",
+      "boot_default": "input",
+      "notes": "Test point TP2."
+    },
+    {
+      "gpio": 45,
+      "net": "GPIO_45",
+      "module": "testpoint",
+      "direction": "tbd",
+      "kind": "unassigned",
+      "active_level": "tbd",
+      "safety_class": "unassigned",
+      "processing": "none",
+      "boot_default": "input",
+      "notes": "Test point TP1."
+    },
+    {
+      "gpio": 4,
+      "net": "ESP_GPIO4",
+      "module": "external_connectors",
+      "direction": "tbd",
+      "kind": "expansion_io",
+      "active_level": "tbd",
+      "safety_class": "tbd",
+      "processing": "tbd",
+      "boot_default": "input",
+      "notes": "Reserved expansion IO on J1/J2."
+    },
+    {
+      "gpio": 5,
+      "net": "ESP_GPIO5",
+      "module": "external_connectors",
+      "direction": "tbd",
+      "kind": "expansion_io",
+      "active_level": "tbd",
+      "safety_class": "tbd",
+      "processing": "tbd",
+      "boot_default": "input",
+      "notes": "Reserved expansion IO on J1/J2."
+    },
+    {
+      "gpio": 6,
+      "net": "ESP_GPIO6",
+      "module": "external_connectors",
+      "direction": "tbd",
+      "kind": "expansion_io",
+      "active_level": "tbd",
+      "safety_class": "tbd",
+      "processing": "tbd",
+      "boot_default": "input",
+      "notes": "Reserved expansion IO on J1/J2."
+    },
+    {
+      "gpio": 7,
+      "net": "ESP_GPIO7",
+      "module": "external_connectors",
+      "direction": "tbd",
+      "kind": "expansion_io",
+      "active_level": "tbd",
+      "safety_class": "tbd",
+      "processing": "tbd",
+      "boot_default": "input",
+      "notes": "Reserved expansion IO on J1/J2."
+    }
+  ],
+  "bus_lock": [
+    {
+      "name": "imu_bus",
+      "protocol": "SPI (preferred by wiring) or I2C (mode-dependent)",
+      "pins": {
+        "sclk": 40,
+        "mosi_or_sda": 38,
+        "miso_or_sa0": 41,
+        "cs": 39,
+        "int2": 42
+      },
+      "status": "locked_pins_mode_tbd"
+    },
+    {
+      "name": "dac_bus",
+      "protocol": "I2C",
+      "pins": {
+        "scl": 12,
+        "sda": 11
+      },
+      "status": "locked",
+      "device_address_7bit": "0x48"
+    },
+    {
+      "name": "haptic_bus",
+      "protocol": "I2C",
+      "pins": {
+        "scl": 36,
+        "sda": 35
+      },
+      "status": "locked",
+      "device_address_7bit": "0x5A"
+    }
+  ],
+  "safety_bit_source_lock": {
+    "SAFETY_BIT_TEC_READY": [
+      "PWR_TEC_GOOD"
+    ],
+    "SAFETY_BIT_TEC_OK": [
+      "TEC_TEMPGD"
+    ],
+    "SAFETY_BIT_LD_OK": [
+      "PWR_LD_PGOOD",
+      "LD_LPGD"
+    ],
+    "SAFETY_BIT_ORIENTATION_OK": [
+      "IMU status computation"
+    ],
+    "SAFETY_BIT_DISTANCE_OK": [
+      "external distance interface (TBD)"
+    ],
+    "SAFETY_BIT_INTERLOCK_OK": [
+      "external interlock input (TBD)"
+    ]
+  },
+  "known_conflicts_and_actions": [
+    {
+      "issue": "IO37 drives both ERM_TRIG and GN_LD_EN node in current schematic net naming",
+      "impact": "haptic trigger and visible laser load-switch enable are coupled",
+      "action": "treat as locked hardware behavior unless schematic ECO changes; firmware must avoid independent assumptions"
+    }
+  ]
+}

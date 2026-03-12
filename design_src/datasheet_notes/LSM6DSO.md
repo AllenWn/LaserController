@@ -24,6 +24,15 @@ Source: `design_src/datasheet/lsm6dso.pdf`
 ## Interrupts
 - `INT1` and `INT2` pins support interrupt signaling (configurable via registers).
 
+### Interrupt Output Electrical / Polarity (CTRL3_C)
+The interrupt pins are configurable; do not assume a fixed polarity/driver.
+
+- Activation level: `H_LACTIVE`
+  - `0` (default): interrupt output pins **active high**
+  - `1`: interrupt output pins **active low**
+- Output driver: `PP_OD`
+  - `0` (default): **push-pull** mode
+  - `1`: **open-drain** mode
+
 ## Pins Used On This PCB (from schematic)
 - `CS`, `SCL/SPC`, `SDA/SDI`, `SDO`, `INT2` are routed to the ESP32.
-
