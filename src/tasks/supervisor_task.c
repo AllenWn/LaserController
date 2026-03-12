@@ -6,7 +6,10 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
+#include "board_io.h"
+#include "control_config.h"
 #include "fsm.h"
+#include "modules/dac_control.h"
 #include "system_config.h"
 #include "system_status.h"
 
@@ -95,10 +98,22 @@ static void supervisor_task(void *arg)
     };
     const fsm_outputs_t out = fsm_step(&in);
 
-    // TODO: Apply outputs to hardware:
-    // - control PWR enables
-    // - control LD mode (SBDN)
-    // - gate emission and/or clamp setpoints (DAC)
+    // Apply outputs to hardware (with safety overrides).
+    (void)board_io_apply_fsm_outputs(&out, permit, (snap.fault_latch != 0));
+
+    // DAC policy: clamp whenever FSM requests clamp OR safety is not permitting OR fault is present.
+    const bool clamp = out.clamp_setpoints || !permit || (snap.fault_latch != 0);
+    dac_control_set_clamp(clamp);
+    if (out.state == SYS_FIRING && permit && !clamp)
+    {
+      // TBD: replace with real setpoint selection logic / command interface.
+      dac_control_set_targets(DAC_LD_CODE_FIRING_TBD, DAC_TEC_CODE_READY_TBD);
+    }
+    else
+    {
+      // Keep TEC regulation setpoint during READY; LD setpoint safe.
+      dac_control_set_targets(DAC_LD_CODE_SAFE_TBD, DAC_TEC_CODE_READY_TBD);
+    }
 
     const system_state_t st = out.state;
     if (st != last_state)
