@@ -16,19 +16,11 @@ static const char *TAG = "dig_mon";
 #define DIGITAL_MONITOR_PERIOD_MS 10
 #endif
 
-// Polarity placeholders (TBD verify on hardware)
-#ifndef PWR_TEC_GOOD_ACTIVE_HIGH_TBD
-#define PWR_TEC_GOOD_ACTIVE_HIGH_TBD 1
-#endif
-#ifndef PWR_LD_PGOOD_ACTIVE_HIGH_TBD
-#define PWR_LD_PGOOD_ACTIVE_HIGH_TBD 1
-#endif
-#ifndef LD_LPGD_ACTIVE_HIGH_TBD
-#define LD_LPGD_ACTIVE_HIGH_TBD 1
-#endif
-#ifndef TEC_TEMPGD_ACTIVE_HIGH_TBD
-#define TEC_TEMPGD_ACTIVE_HIGH_TBD 1
-#endif
+// Digital-good polarity (confirmed): HIGH means GOOD.
+#define PWR_TEC_GOOD_ACTIVE_HIGH 1
+#define PWR_LD_PGOOD_ACTIVE_HIGH 1
+#define LD_LPGD_ACTIVE_HIGH 1
+#define TEC_TEMPGD_ACTIVE_HIGH 1
 
 static void digital_monitor_task(void *arg)
 {
@@ -37,8 +29,8 @@ static void digital_monitor_task(void *arg)
   const pwr_monitor_config_t pwr_cfg = {
       .pwr_tec_pgood_gpio = PWR_TEC_GOOD_GPIO,
       .pwr_ld_pgood_gpio = PWR_LD_PGOOD_GPIO,
-      .tec_pgood_active_high = PWR_TEC_GOOD_ACTIVE_HIGH_TBD,
-      .ld_pgood_active_high = PWR_LD_PGOOD_ACTIVE_HIGH_TBD,
+      .tec_pgood_active_high = PWR_TEC_GOOD_ACTIVE_HIGH,
+      .ld_pgood_active_high = PWR_LD_PGOOD_ACTIVE_HIGH,
       .assert_debounce_samples = 2,
   };
 
@@ -50,8 +42,8 @@ static void digital_monitor_task(void *arg)
       .use_tmo_for_safety = false,
       .use_lio_for_safety = false,
       .read_voltage = NULL,
-      .pwr_ld_pgood_active_high = PWR_LD_PGOOD_ACTIVE_HIGH_TBD,
-      .ld_lpgd_active_high = LD_LPGD_ACTIVE_HIGH_TBD,
+      .pwr_ld_pgood_active_high = PWR_LD_PGOOD_ACTIVE_HIGH,
+      .ld_lpgd_active_high = LD_LPGD_ACTIVE_HIGH,
       .tmo_temp_a_c = 0.0f,
       .tmo_temp_b_c_per_v = 0.0f,
       .lio_amps_per_v = 0.0f,
@@ -73,8 +65,8 @@ static void digital_monitor_task(void *arg)
       .use_itec_for_safety = false,
       .use_vtec_for_safety = false,
       .read_voltage = NULL,
-      .pwr_tec_pgood_active_high = PWR_TEC_GOOD_ACTIVE_HIGH_TBD,
-      .tec_tempgd_active_high = TEC_TEMPGD_ACTIVE_HIGH_TBD,
+      .pwr_tec_pgood_active_high = PWR_TEC_GOOD_ACTIVE_HIGH,
+      .tec_tempgd_active_high = TEC_TEMPGD_ACTIVE_HIGH,
       .tmo_temp_a_c = 0.0f,
       .tmo_temp_b_c_per_v = 0.0f,
       .itec_v_offset_v = 0.0f,
@@ -137,4 +129,3 @@ void digital_monitor_task_start(void)
   xTaskCreatePinnedToCore(digital_monitor_task, "dig_mon", 4096, NULL, 10, NULL, 0);
   ESP_LOGI(TAG, "Digital monitor task started (period=%dms)", (int)DIGITAL_MONITOR_PERIOD_MS);
 }
-

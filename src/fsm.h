@@ -6,9 +6,11 @@
 typedef enum
 {
   SYS_OFF = 0,
-  SYS_READY = 1,
-  SYS_FIRING = 2,
-  SYS_FAULT = 3,
+  SYS_POWERUP_TEC = 1,
+  SYS_POWERUP_LD = 2,
+  SYS_READY = 3,
+  SYS_FIRING = 4,
+  SYS_FAULT = 5,
 } system_state_t;
 
 typedef enum
@@ -21,8 +23,6 @@ typedef enum
 typedef struct
 {
   // Policy knobs; finalize during system design.
-  bool ready_enable_tec_power;
-  bool ready_enable_ld_power;
   ld_mode_t ready_ld_mode;
 } fsm_config_t;
 
@@ -33,6 +33,10 @@ typedef struct
 
   // Safety supervisor decision (true means all required conditions OK).
   bool permit;
+
+  // Power-domain readiness used by power-up sequencing.
+  bool pwr_tec_ready;
+  bool pwr_ld_ready;
 
   // External/system fault input (latched FAULT behavior handled by FSM).
   bool fault_present;

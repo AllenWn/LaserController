@@ -15,4 +15,3 @@ esp_err_t board_io_init(void);
 // - If permit is false, emission is forced off (LD in SHUTDOWN).
 // - If fault_present is true, outputs are driven to safe state.
 esp_err_t board_io_apply_fsm_outputs(const fsm_outputs_t *out, bool permit, bool fault_present);
-

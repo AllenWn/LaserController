@@ -54,6 +54,11 @@
 #define EXP_IO6_GPIO GPIO_NUM_6
 #define EXP_IO7_GPIO GPIO_NUM_7
 
+// Trigger button input (default on expansion IO, update after B2B pinout is finalized).
+#ifndef TRIGGER_BUTTON_GPIO
+#define TRIGGER_BUTTON_GPIO EXP_IO4_GPIO
+#endif
+
 // Shared node on current schematic: ERM_TRIG and GN_LD_EN
 #define ERM_TRIG_GN_LD_EN_GPIO GPIO_NUM_37
 #define ERM_EN_GPIO GPIO_NUM_48

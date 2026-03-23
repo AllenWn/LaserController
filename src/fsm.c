@@ -46,9 +46,25 @@ static fsm_outputs_t outputs_for_state(system_state_t state)
     o.clamp_setpoints = true;
     break;
 
+  case SYS_POWERUP_TEC:
+    o.enable_tec_power = true;
+    o.enable_ld_power = false;
+    o.ld_mode = LD_MODE_SHUTDOWN;
+    o.want_emission = false;
+    o.clamp_setpoints = true;
+    break;
+
+  case SYS_POWERUP_LD:
+    o.enable_tec_power = true;
+    o.enable_ld_power = true;
+    o.ld_mode = LD_MODE_SHUTDOWN;
+    o.want_emission = false;
+    o.clamp_setpoints = true;
+    break;
+
   case SYS_READY:
-    o.enable_tec_power = s_cfg.ready_enable_tec_power;
-    o.enable_ld_power = s_cfg.ready_enable_ld_power;
+    o.enable_tec_power = true;
+    o.enable_ld_power = true;
     o.ld_mode = s_cfg.ready_ld_mode;
     o.want_emission = false;
     o.clamp_setpoints = true;
@@ -91,8 +107,24 @@ fsm_outputs_t fsm_step(const fsm_inputs_t *in)
   switch (state)
   {
   case SYS_OFF:
-    // No explicit ARM input in this design: automatically enter READY when not in FAULT.
+    // No explicit ARM input in this design: auto-start power-up sequence.
     if (!i.fault_present)
+    {
+      transition_to(SYS_POWERUP_TEC);
+      state = SYS_POWERUP_TEC;
+    }
+    break;
+
+  case SYS_POWERUP_TEC:
+    if (i.pwr_tec_ready)
+    {
+      transition_to(SYS_POWERUP_LD);
+      state = SYS_POWERUP_LD;
+    }
+    break;
+
+  case SYS_POWERUP_LD:
+    if (i.pwr_ld_ready)
     {
       transition_to(SYS_READY);
       state = SYS_READY;

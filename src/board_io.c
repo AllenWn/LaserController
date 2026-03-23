@@ -15,10 +15,30 @@ static void gpio_write(gpio_num_t gpio, bool high)
 static void set_pwr_tec_en(bool en) { gpio_write(PWR_TEC_EN_GPIO, en); }
 static void set_pwr_ld_en(bool en) { gpio_write(PWR_LD_EN_GPIO, en); }
 
-static void set_ld_pcn_low(void) { gpio_write(LD_PCN_GPIO, false); }
+static void set_ld_pcn_high(void) { gpio_write(LD_PCN_GPIO, true); }
 
-static void set_ld_sbdn_shutdown(void) { gpio_write(LD_SBDN_GPIO, false); }
-static void set_ld_sbdn_operate(void) { gpio_write(LD_SBDN_GPIO, true); }
+static void set_ld_sbdn_shutdown(void)
+{
+  (void)gpio_set_pull_mode(LD_SBDN_GPIO, GPIO_FLOATING);
+  (void)gpio_set_direction(LD_SBDN_GPIO, GPIO_MODE_OUTPUT);
+  gpio_write(LD_SBDN_GPIO, false);
+}
+
+static void set_ld_sbdn_standby_hiz(void)
+{
+  // Standby is implemented by releasing the pin to high-Z so the external
+  // resistor divider can bias SBDN to its mid-level "STANDBY" threshold.
+  // (Confirmed hardware behavior: LOW=shutdown, Hi-Z=standby, HIGH=operate.)
+  (void)gpio_set_pull_mode(LD_SBDN_GPIO, GPIO_FLOATING);
+  (void)gpio_set_direction(LD_SBDN_GPIO, GPIO_MODE_INPUT);
+}
+
+static void set_ld_sbdn_operate(void)
+{
+  (void)gpio_set_pull_mode(LD_SBDN_GPIO, GPIO_FLOATING);
+  (void)gpio_set_direction(LD_SBDN_GPIO, GPIO_MODE_OUTPUT);
+  gpio_write(LD_SBDN_GPIO, true);
+}
 
 static void apply_ld_mode(ld_mode_t mode)
 {
@@ -27,13 +47,13 @@ static void apply_ld_mode(ld_mode_t mode)
   case LD_MODE_SHUTDOWN:
     set_ld_sbdn_shutdown();
     break;
+  case LD_MODE_STANDBY:
+    set_ld_sbdn_standby_hiz();
+    break;
   case LD_MODE_OPERATE:
     set_ld_sbdn_operate();
     break;
-  case LD_MODE_STANDBY:
   default:
-    // TBD: ATLS6A214D SBDN supports a mid-level "standby", but ESP32 GPIO is 0/3.3V.
-    // Unless the PCB provides an analog level network, treat STANDBY as SHUTDOWN (fail-safe).
     set_ld_sbdn_shutdown();
     break;
   }
@@ -59,7 +79,8 @@ esp_err_t board_io_init(void)
   set_pwr_tec_en(false);
   set_pwr_ld_en(false);
   set_ld_sbdn_shutdown();
-  set_ld_pcn_low();
+  // LISL is hard-tied to GND on this design; always select the high port (LISH).
+  set_ld_pcn_high();
 
   ESP_LOGI(TAG, "IO initialized (fail-safe outputs set)");
   return ESP_OK;
@@ -78,7 +99,7 @@ esp_err_t board_io_apply_fsm_outputs(const fsm_outputs_t *out, bool permit, bool
     set_pwr_tec_en(false);
     set_pwr_ld_en(false);
     set_ld_sbdn_shutdown();
-    set_ld_pcn_low();
+    set_ld_pcn_high();
     return ESP_OK;
   }
 
@@ -86,21 +107,20 @@ esp_err_t board_io_apply_fsm_outputs(const fsm_outputs_t *out, bool permit, bool
   set_pwr_tec_en(out->enable_tec_power);
   set_pwr_ld_en(out->enable_ld_power);
 
-  // PCN policy is not defined yet; keep a safe deterministic default.
-  // TBD: implement real power-level selection strategy.
-  set_ld_pcn_low();
+  // LISL is hard-tied to GND on this design; always select the high port (LISH).
+  set_ld_pcn_high();
 
-  // Emission gating:
-  // - permit false => force LD shutdown
-  // - want_emission false => also keep LD in safe mode (even if READY selects operate)
-  if (!permit || !out->want_emission)
+  // Supervisor gating:
+  // - permit false => force LD shutdown (override any FSM request)
+  if (!permit)
   {
     set_ld_sbdn_shutdown();
     return ESP_OK;
   }
 
-  // FIRING path: allow LD operate.
-  apply_ld_mode(out->ld_mode);
+  // Permit is true: allow READY to hold STANDBY (high-Z) and FIRING to request OPERATE.
+  // If the FSM requests emission, force OPERATE regardless of configured READY mode.
+  const ld_mode_t mode = out->want_emission ? LD_MODE_OPERATE : out->ld_mode;
+  apply_ld_mode(mode);
   return ESP_OK;
 }
-

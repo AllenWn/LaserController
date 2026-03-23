@@ -12,13 +12,11 @@
 
 static const char *TAG = "dac_task";
 
-#ifndef DAC_TASK_PERIOD_MS
-#define DAC_TASK_PERIOD_MS 50
-#endif
-
 #ifndef DAC_I2C_ADDR_7BIT_TBD
 #define DAC_I2C_ADDR_7BIT_TBD 0x48
 #endif
+
+static TaskHandle_t s_dac_task;
 
 static esp_err_t i2c_master_init_dac_bus(void)
 {
@@ -40,9 +38,40 @@ static esp_err_t i2c_master_init_dac_bus(void)
   return err;
 }
 
+static void dac_apply_once(dac80502_i2c_t *dac, uint16_t *last_a, uint16_t *last_b)
+{
+  const dac_targets_t t = dac_control_get_targets();
+
+  uint16_t a = t.ld_code;
+  uint16_t b = t.tec_code;
+  if (t.clamp)
+  {
+    a = DAC_LD_CODE_SAFE_TBD;
+    b = DAC_TEC_CODE_SAFE_TBD;
+  }
+
+  if (a != *last_a)
+  {
+    (void)dac80502_i2c_write_reg(dac, DAC80502_REG_DAC_A_DATA, a);
+    *last_a = a;
+  }
+  if (b != *last_b)
+  {
+    (void)dac80502_i2c_write_reg(dac, DAC80502_REG_DAC_B_DATA, b);
+    *last_b = b;
+  }
+}
+
 static void dac_task(void *arg)
 {
   (void)arg;
+  // NOTE: s_dac_task is set by xTaskCreatePinnedToCore() so other tasks can
+  // notify us immediately after creation. Keep this assignment as a sanity
+  // fallback in case the start function changes.
+  if (!s_dac_task)
+  {
+    s_dac_task = xTaskGetCurrentTaskHandle();
+  }
 
   dac_control_init();
 
@@ -58,40 +87,28 @@ static void dac_task(void *arg)
   (void)dac80502_i2c_write_reg(&dac, DAC80502_REG_DAC_A_DATA, DAC_LD_CODE_SAFE_TBD);
   (void)dac80502_i2c_write_reg(&dac, DAC80502_REG_DAC_B_DATA, DAC_TEC_CODE_SAFE_TBD);
 
-  TickType_t last = xTaskGetTickCount();
-  uint16_t last_a = 0xFFFF;
-  uint16_t last_b = 0xFFFF;
+  uint16_t last_a = DAC_LD_CODE_SAFE_TBD;
+  uint16_t last_b = DAC_TEC_CODE_SAFE_TBD;
 
   for (;;)
   {
-    vTaskDelayUntil(&last, pdMS_TO_TICKS(DAC_TASK_PERIOD_MS));
-
-    const dac_targets_t t = dac_control_get_targets();
-
-    uint16_t a = t.ld_code;
-    uint16_t b = t.tec_code;
-    if (t.clamp)
-    {
-      a = DAC_LD_CODE_SAFE_TBD;
-      b = DAC_TEC_CODE_SAFE_TBD;
-    }
-
-    if (a != last_a)
-    {
-      (void)dac80502_i2c_write_reg(&dac, DAC80502_REG_DAC_A_DATA, a);
-      last_a = a;
-    }
-    if (b != last_b)
-    {
-      (void)dac80502_i2c_write_reg(&dac, DAC80502_REG_DAC_B_DATA, b);
-      last_b = b;
-    }
+    // Block until supervisor/control notifies that targets/clamp changed.
+    (void)ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+    dac_apply_once(&dac, &last_a, &last_b);
   }
 }
 
 void dac_task_start(void)
 {
-  xTaskCreatePinnedToCore(dac_task, "dac", 4096, NULL, 6, NULL, 0);
-  ESP_LOGI(TAG, "DAC task started (period=%dms)", (int)DAC_TASK_PERIOD_MS);
+  xTaskCreatePinnedToCore(dac_task, "dac", 4096, NULL, 6, &s_dac_task, 0);
+  ESP_LOGI(TAG, "DAC task started (event-driven)");
 }
 
+void dac_task_notify_update(void)
+{
+  if (!s_dac_task)
+  {
+    return;
+  }
+  xTaskNotifyGive(s_dac_task);
+}
