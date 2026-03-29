@@ -10,7 +10,8 @@ typedef enum
   SYS_POWERUP_LD = 2,
   SYS_READY = 3,
   SYS_FIRING = 4,
-  SYS_FAULT = 5,
+  SYS_FAULT_INTERNAL = 5,
+  SYS_FAULT_USAGE = 6,
 } system_state_t;
 
 typedef enum
@@ -38,11 +39,13 @@ typedef struct
   bool pwr_tec_ready;
   bool pwr_ld_ready;
 
-  // External/system fault input (latched FAULT behavior handled by FSM).
-  bool fault_present;
+  // External/system fault inputs (latched behavior handled by FSM).
+  bool internal_fault_present;
+  bool usage_fault_present;
 
-  // Fault clear request (e.g., dedicated reset action).
-  bool fault_clear;
+  // Fault clear requests.
+  bool internal_fault_clear;
+  bool usage_fault_clear;
 } fsm_inputs_t;
 
 typedef struct

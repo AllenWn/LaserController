@@ -1,0 +1,17 @@
+{
+  "source_pdf": "design_src/schematic/BMS_Schematic PDF_[No Variations].pdf",
+  "page_count": 2,
+  "rendered_images_dir": "design_src/bms/pages",
+  "pages": [
+    {
+      "page_number": 1,
+      "json": "design_src/bms/semantic/schematic_page_01_semantic.json",
+      "image": "design_src/bms/pages/page-01.png"
+    },
+    {
+      "page_number": 2,
+      "json": "design_src/bms/semantic/schematic_page_02_semantic.json",
+      "image": "design_src/bms/pages/page-02.png"
+    }
+  ]
+}

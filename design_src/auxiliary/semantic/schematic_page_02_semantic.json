@@ -1,0 +1,46 @@
+{
+  "page_number": 2,
+  "page_title": "Main Buttons",
+  "switches": [
+    {
+      "ref": "S1",
+      "value": "430471035826",
+      "role": "Auxiliary switch",
+      "signal": "MCP_GPA3",
+      "topology": "pulled up to VDD_3V3 through R1 and shorted to GND when pressed",
+      "logic_meaning": "active_low_button"
+    },
+    {
+      "ref": "S2",
+      "value": "430471035826",
+      "role": "Auxiliary switch",
+      "signal": "MCP_GPA2",
+      "topology": "pulled up to VDD_3V3 through R2 and shorted to GND when pressed",
+      "logic_meaning": "active_low_button"
+    },
+    {
+      "ref": "SW1",
+      "value": "SKRNPBE010",
+      "role": "Main button",
+      "signals": ["MCP_GPA0", "MCP_GPA1"],
+      "topology": "both channels pulled up to VDD_3V3 through R3/R4 and driven low together by the switch",
+      "logic_meaning": "active_low_dual_channel_button"
+    }
+  ],
+  "pullups": [
+    { "ref": "R1", "value": "10k", "net": "MCP_GPA3", "to": "VDD_3V3" },
+    { "ref": "R2", "value": "10k", "net": "MCP_GPA2", "to": "VDD_3V3" },
+    { "ref": "R3", "value": "10k", "net": "MCP_GPA0", "to": "VDD_3V3" },
+    { "ref": "R4", "value": "10k", "net": "MCP_GPA1", "to": "VDD_3V3" }
+  ],
+  "sheet_links": [
+    { "signal": "MCP_GPA0", "destination": "GPIO_Expander[1B]" },
+    { "signal": "MCP_GPA1", "destination": "GPIO_Expander[1B]" },
+    { "signal": "MCP_GPA2", "destination": "GPIO_Expander[1B]" },
+    { "signal": "MCP_GPA3", "destination": "GPIO_Expander[1B]" }
+  ],
+  "notes_from_sheet": [
+    "All three user button inputs are active low.",
+    "The main button is duplicated onto two expander inputs, likely for redundancy or multi-contact detection."
+  ]
+}

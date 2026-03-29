@@ -48,15 +48,35 @@
 #define TP_IO45_GPIO GPIO_NUM_45
 #define TP_IO3_GPIO GPIO_NUM_3
 
-// External expansion / candidate distance interfaces
+// Cross-board signals routed through the BMS / PD path
 #define EXP_IO4_GPIO GPIO_NUM_4
 #define EXP_IO5_GPIO GPIO_NUM_5
 #define EXP_IO6_GPIO GPIO_NUM_6
 #define EXP_IO7_GPIO GPIO_NUM_7
 
-// Trigger button input (default on expansion IO, update after B2B pinout is finalized).
-#ifndef TRIGGER_BUTTON_GPIO
-#define TRIGGER_BUTTON_GPIO EXP_IO4_GPIO
+// PD board supervision path (cross-board through BMS).
+#define PD_ST_SDA_GPIO EXP_IO4_GPIO
+#define PD_ST_SCL_GPIO EXP_IO5_GPIO
+
+// BMS battery-toggle header path (cross-board through BMS).
+#define BMS_GPIO6_HEADER_GPIO EXP_IO6_GPIO
+#define BMS_GPIO7_HEADER_GPIO EXP_IO7_GPIO
+
+// Auxiliary-board host interface.
+// The Auxiliary board electrical contract is known (3V3 + I2C + GPIO_INT_A),
+// but its landing point on the MainBoard is not yet locked in the current
+// schematic set. Keep these as NC placeholders until the harness/connector map
+// is confirmed.
+#ifndef AUX_I2C_SDA_GPIO
+#define AUX_I2C_SDA_GPIO GPIO_NUM_NC
+#endif
+
+#ifndef AUX_I2C_SCL_GPIO
+#define AUX_I2C_SCL_GPIO GPIO_NUM_NC
+#endif
+
+#ifndef AUX_GPIO_INT_A_GPIO
+#define AUX_GPIO_INT_A_GPIO GPIO_NUM_NC
 #endif
 
 // Shared node on current schematic: ERM_TRIG and GN_LD_EN

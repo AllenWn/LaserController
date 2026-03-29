@@ -1,0 +1,47 @@
+{
+  "page_number": 3,
+  "page_title": "GPIO Expander",
+  "modules": [
+    {
+      "ref": "U2",
+      "value": "MCP23017T-E/ML",
+      "role": "16-bit I2C GPIO expander",
+      "pins": [
+        { "pin_number": "5", "pin_name": "VDD", "net": "VDD_3V3" },
+        { "pin_number": "6", "pin_name": "VSS", "net": "GND" },
+        { "pin_number": "29", "pin_name": "EP", "net": "GND" },
+        { "pin_number": "14", "pin_name": "RESET", "net": "VDD_3V3" },
+        { "pin_number": "20", "pin_name": "INTA", "net": "GPIO_INT_A" },
+        { "pin_number": "19", "pin_name": "INTB", "net": null },
+        { "pin_number": "11", "pin_name": "A0", "net": "GND" },
+        { "pin_number": "12", "pin_name": "A1", "net": "GND" },
+        { "pin_number": "13", "pin_name": "A2", "net": "GND" },
+        { "pin_number": "9", "pin_name": "SDA", "net": "I2C_SDA" },
+        { "pin_number": "10", "pin_name": "SCK", "net": "I2C_SCL" },
+        { "pin_number": "21", "pin_name": "GPA0", "net": "MCP_GPA0" },
+        { "pin_number": "22", "pin_name": "GPA1", "net": "MCP_GPA1" },
+        { "pin_number": "23", "pin_name": "GPA2", "net": "MCP_GPA2" },
+        { "pin_number": "24", "pin_name": "GPA3", "net": "MCP_GPA3" },
+        { "pin_number": "1", "pin_name": "GPB4", "net": "LRA_EN" }
+      ]
+    }
+  ],
+  "passive_components": [
+    { "ref": "C5", "value": "1uF", "nets": ["VDD_3V3", "GND"] }
+  ],
+  "sheet_links": [
+    { "signal": "I2C_SDA", "sources": ["Connectors[2B]"], "destinations": ["LEDs[1B]", "LRA_Driver[1B]"] },
+    { "signal": "I2C_SCL", "sources": ["Connectors[2B]"], "destinations": ["LEDs[1A]", "LRA_Driver[1B]"] },
+    { "signal": "MCP_GPA0", "source": "Buttons[2C]" },
+    { "signal": "MCP_GPA1", "source": "Buttons[2C]" },
+    { "signal": "MCP_GPA2", "source": "Buttons[3C]" },
+    { "signal": "MCP_GPA3", "source": "Buttons[1B]" },
+    { "signal": "LRA_EN", "destination": "LRA_Driver[1B]" },
+    { "signal": "GPIO_INT_A", "destination": "Connectors[2B]" }
+  ],
+  "notes_from_sheet": [
+    "RESET is tied high, so the expander is always enabled when 3.3V is present.",
+    "A0/A1/A2 are tied low, giving the device base I2C address configuration.",
+    "Only INTA is exported off-sheet; INTB is unused."
+  ]
+}

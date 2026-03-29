@@ -1,30 +1,109 @@
-# TEC14M5V3R5AS (Micro TEC Controller)
+# TEC14M5V3R5AS
 
-Source: `design_src/datasheet/Micro_TEC_Controller_TEC14M5V3R5AS.pdf`
+Source PDF: `design_src/datasheet/Micro_TEC_Controller_TEC14M5V3R5AS.pdf`
 
-## Key Pins (firmware-relevant)
-- `TEMPGD` (digital output): temperature-good indication.
-- `TMO` (analog output): actual object temperature indication.
-  - Datasheet pin table states: **`0.1V` to `2.5V` indicates the default temperature network range**.
-- `VTEC` (analog output): TEC voltage indication.
-- `ITEC` (analog output): TEC current indication.
-  - Datasheet pin table states: `ITEC = (VITEC − 1.25) / 0.285`, where `VITEC` is the voltage on the `ITEC` pin and `ITEC` is defined as current flowing into `TEC+` and out of `TEC−`.
-- `TECP` / `TECN`: TEC terminals (power).
-- `RTH`: inverting input to error amplifier.
+Firmware-oriented notes for the **TEC14M5V3R5AS** TEC controller used on the `MainBoard`.
 
-## Firmware-Relevant Notes For This PCB
-- `TEMPGD` is routed to the ESP32 as a GPIO input.
-- `TMO`, `VTEC`, `ITEC` appear on ESP32 pins on this PCB. These are **analog monitor outputs**; do not treat them as “high/low = good/bad” unless the PCB has extra comparators/level-shifters that convert them to digital.
-  - If you want to use them in firmware, they should be routed into an ESP32 ADC-capable GPIO (and the analog front-end / scaling must be confirmed).
+## 1. Device role
 
-## Pin Semantics Summary (what HIGH/LOW means)
-- `TEMPGD` (digital):
-  - Datasheet labels it “Temperature good indication” but **does not clearly state polarity** in the extracted text.
-  - Current project assumption (based on board indicator usage): **`TEMPGD = HIGH` ⇒ “good”** (must verify on hardware).
-- `TMO`, `VTEC`, `ITEC`:
-  - These are **analog voltages**, so “HIGH/LOW = good/bad” is not a defined concept; instead firmware must compare against thresholds after ADC conversion (thresholds are system-level requirements, not fixed by the chip).
+- Dedicated TEC controller module
+- Closes the TEC loop in hardware
+- Firmware supervises status and telemetry, but does not implement the control loop itself
 
-## Other Digital/Special Pins (not currently used on this PCB)
-- `SDNG` (pin 9, “Shutdown/Temperature good”, analog I/O):
-  - Datasheet pin table: **pulling `SDNG` low shuts down the device**.
-  - If left unconnected, it outputs a temperature-related indication (voltage levels described in the datasheet pin table).
+## 2. Pins relevant to firmware
+
+From the datasheet pin function table and the board usage:
+
+- `TMO` — analog object-temperature monitor
+- `TMS` — analog temperature set input
+- `SDNG` — shutdown / multi-function control-related pin
+- `TEMPGD` — digital temperature-good indication
+- `VTEC` — analog TEC voltage indication
+- `ITEC` — analog TEC current indication
+- `ILIM`, `VLIM` — analog limit-setting inputs
+
+## 3. Digital status output
+
+### `TEMPGD`
+
+Datasheet meaning:
+
+- temperature-good indication output
+
+Project-level interpretation:
+
+- `HIGH` -> TEC temperature condition acceptable
+- `LOW` -> not within acceptable condition
+
+This is the main digital TEC health signal used by the firmware design.
+
+## 4. Analog monitor outputs
+
+### `TMO`
+
+Datasheet meaning:
+
+- actual object temperature indication
+- about `0.1 V` to `2.5 V` across the default temperature network range
+
+Firmware implication:
+
+- This is an ADC signal, not a digital fault line
+- Final threshold use requires board-level calibration and the chosen thermal operating window
+
+### `ITEC`
+
+Datasheet relationship:
+
+- `ITEC = (V_ITEC - 1.25 V) / 0.285`
+
+Firmware implication:
+
+- TEC current can be derived from ADC voltage
+- This should be treated as monitored telemetry unless a validated threshold policy is defined
+
+### `VTEC`
+
+Datasheet meaning:
+
+- analog TEC voltage indication
+
+The datasheet notes limit relations through `VLIM`, but final use in firmware still depends on board-specific scaling and validation.
+
+## 5. Control-related pins
+
+### `TMS`
+
+Datasheet meaning:
+
+- analog temperature set input
+
+Project implication:
+
+- This is a command/setpoint input
+- It is not a direct digital safety indicator
+
+### `SDNG`
+
+Datasheet meaning:
+
+- shutdown-related multifunction pin
+
+Project implication:
+
+- The board currently uses `TEMPGD` as the primary firmware-facing health signal
+- `SDNG` still matters for understanding the controller behavior, but it is not the main MCU supervision path in the current mainboard design
+
+## 6. Project-specific interpretation
+
+The TEC controller should be modeled in firmware as:
+
+- one digital health output: `TEMPGD`
+- several ADC telemetry outputs: `TMO`, `ITEC`, `VTEC`
+- one analog command path: `TMS`
+
+## 7. Open items for final bring-up
+
+- Confirm actual `TEMPGD` polarity on hardware
+- Validate `TMO`, `ITEC`, and `VTEC` scaling with real measurements
+- Decide which analog TEC signals become hard safety thresholds versus logged telemetry only

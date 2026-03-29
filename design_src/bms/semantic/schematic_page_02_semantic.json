@@ -1,0 +1,60 @@
+{
+  "page_number": 2,
+  "page_title": "Load Switching",
+  "modules": [
+    {
+      "ref": "U1",
+      "value": "TPS2121RUXR",
+      "role": "Power mux / load sharing switch",
+      "pins": [
+        { "pin_number": "7", "pin_name": "IN1", "net": "VBUS" },
+        { "pin_number": "2", "pin_name": "IN2", "net": "VBAT" },
+        { "pin_number": "1", "pin_name": "OUT", "net": "VSYS" },
+        { "pin_number": "8", "pin_name": "OUT", "net": "VSYS" },
+        { "pin_number": "10", "pin_name": "ILM", "net": "ILM_SET" },
+        { "pin_number": "11", "pin_name": "SS", "net": "SS" },
+        { "pin_number": "9", "pin_name": "ST", "net": "ST" },
+        { "pin_number": "12", "pin_name": "GND", "net": "GND" },
+        { "pin_number": "5", "pin_name": "OV1", "net": "OV_THRESHOLD" },
+        { "pin_number": "4", "pin_name": "OV2", "net": "OV_THRESHOLD" },
+        { "pin_number": "3", "pin_name": "CP2", "net": "GND" },
+        { "pin_number": "6", "pin_name": "PR1", "net": "PRIORITY_SET" }
+      ]
+    }
+  ],
+  "passive_components": [
+    { "ref": "R1", "value": "10k", "net": "VBUS_DIV_TOP" },
+    { "ref": "R5", "value": "5k", "net": "VBUS_DIV_BOTTOM" },
+    { "ref": "R2", "value": "97k6", "net": "VBAT_DIV_TOP" },
+    { "ref": "R6", "value": "5k", "net": "VBAT_DIV_BOTTOM" },
+    { "ref": "R3", "value": "97k6", "net": "VBUS_DIV_TOP_2" },
+    { "ref": "R7", "value": "5k", "net": "VBUS_DIV_BOTTOM_2" },
+    { "ref": "R4", "value": "18k7", "net": "ILM_SET" },
+    { "ref": "C1", "value": "0.1uF_50V", "net": "SS" },
+    { "ref": "C2", "value": "10uF", "nets": ["VSYS", "GND"] },
+    { "ref": "C3", "value": "10uF", "nets": ["VSYS", "GND"] },
+    { "ref": "C4", "value": "1uF", "nets": ["VSYS", "GND"] },
+    { "ref": "C5", "value": "10uF", "nets": ["VBUS", "GND"] },
+    { "ref": "C6", "value": "10uF", "nets": ["VBUS", "GND"] },
+    { "ref": "C7", "value": "1uF", "nets": ["VBUS", "GND"] },
+    { "ref": "C8", "value": "10uF", "nets": ["VBAT", "GND"] },
+    { "ref": "C9", "value": "10uF", "nets": ["VBAT", "GND"] },
+    { "ref": "C10", "value": "1uF", "nets": ["VBAT", "GND"] }
+  ],
+  "test_points": [
+    { "ref": "TP1", "net": "GND" },
+    { "ref": "TP2", "net": "GND" },
+    { "ref": "TP3", "net": "VSYS" },
+    { "ref": "TP4", "net": "VBUS" },
+    { "ref": "TP5", "net": "VBAT" }
+  ],
+  "notes_from_sheet": [
+    "TPS2121 is configured to prioritize VBUS over VBAT whenever VBUS is greater than 5V.",
+    "ILIM is set to 4.6 / 5.2 / 5.8 A with an 18k7 resistor.",
+    "OVx is set to approximately 21.5 V for both VIN inputs."
+  ],
+  "design_meaning": [
+    "VSYS is the muxed system supply delivered to the main board.",
+    "This board is a power-path selector rather than a charger/gauge BMS implementation."
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "page_number": 1,
+  "page_title": "5 Pin JST Connector",
+  "connectors": [
+    {
+      "ref": "J1",
+      "value": "B5B-PH-SM4-TB(LF)(SN)",
+      "role": "Auxiliary board cable connector to main board / harness",
+      "pins": [
+        { "pin": "1", "net": "VDD_3V3" },
+        { "pin": "2", "net": "I2C_SCL" },
+        { "pin": "3", "net": "I2C_SDA" },
+        { "pin": "4", "net": "GPIO_INT_A" },
+        { "pin": "5", "net": "GND" }
+      ]
+    }
+  ],
+  "pullups": [
+    { "ref": "R8", "value": "4.7k", "net": "I2C_SCL", "to": "VDD_3V3" },
+    { "ref": "R9", "value": "4.7k", "net": "I2C_SDA", "to": "VDD_3V3" }
+  ],
+  "test_points": [
+    { "ref": "TP1", "net": "VDD_3V3" },
+    { "ref": "TP2", "net": "I2C_SDA" },
+    { "ref": "TP3", "net": "I2C_SCL" },
+    { "ref": "TP4", "net": "GND" }
+  ],
+  "sheet_links": [
+    { "signal": "I2C_SCL", "destinations": ["GPIO_Expander[1B]", "LEDs[1A]", "LRA_Driver[1B]"] },
+    { "signal": "I2C_SDA", "destinations": ["GPIO_Expander[1B]", "LEDs[1B]", "LRA_Driver[1B]"] },
+    { "signal": "GPIO_INT_A", "destinations": ["GPIO_Expander[2B]"] }
+  ],
+  "mechanical": [
+    { "ref": "MH1", "value": "MHOLE_2.5MM", "net": "GND" },
+    { "ref": "MH2", "value": "MHOLE_2.5MM", "net": "GND" },
+    { "ref": "MH3", "value": "MHOLE_2.5MM", "net": "GND" },
+    { "ref": "MH4", "value": "MHOLE_2.5MM", "net": "GND" },
+    { "ref": "MH5", "value": "MHOLE_2.5MM", "net": "GND" },
+    { "ref": "MH6", "value": "MHOLE_2.5MM", "net": "GND" }
+  ],
+  "notes_from_sheet": [
+    "This sheet defines the board entry point for power, I2C, and a single interrupt line.",
+    "I2C pull-ups are implemented locally on the auxiliary board."
+  ]
+}

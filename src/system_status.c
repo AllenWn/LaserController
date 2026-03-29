@@ -73,6 +73,16 @@ void system_status_update_imu(const imu_status_t *st, TickType_t now)
   portEXIT_CRITICAL(&s_lock);
 }
 
+void system_status_update_pd(const pd_status_t *st, TickType_t now)
+{
+  if (!st)
+    return;
+  portENTER_CRITICAL(&s_lock);
+  s_status.pd = *st;
+  s_status.pd.updated_at = now;
+  portEXIT_CRITICAL(&s_lock);
+}
+
 void system_status_fault_latch(uint32_t fault_mask)
 {
   if (fault_mask == 0)

@@ -1,0 +1,22 @@
+{
+  "source_pdf": "design_src/schematic/PD_Schematic PDF_[No Variations].pdf",
+  "page_count": 3,
+  "rendered_images_dir": "design_src/pd/pages",
+  "pages": [
+    {
+      "page_number": 1,
+      "json": "design_src/pd/semantic/schematic_page_01_semantic.json",
+      "image": "design_src/pd/pages/page-01.png"
+    },
+    {
+      "page_number": 2,
+      "json": "design_src/pd/semantic/schematic_page_02_semantic.json",
+      "image": "design_src/pd/pages/page-02.png"
+    },
+    {
+      "page_number": 3,
+      "json": "design_src/pd/semantic/schematic_page_03_semantic.json",
+      "image": "design_src/pd/pages/page-03.png"
+    }
+  ]
+}

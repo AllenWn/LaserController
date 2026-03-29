@@ -1,0 +1,47 @@
+{
+  "board": "BMS Board",
+  "source_pdf": "design_src/schematic/BMS_Schematic PDF_[No Variations].pdf",
+  "role_summary": [
+    "Acts as a system power-path / load-switching board between PD input, battery input, and the main board.",
+    "Routes PD-board USB sideband and differential signals through board-to-board connectors.",
+    "Provides a muxed VSYS rail to the main board."
+  ],
+  "key_devices": [
+    {
+      "ref": "U1",
+      "value": "TPS2121RUXR",
+      "function": "Power mux / source selection switch",
+      "design_relevance": [
+        "Selects between VBUS and VBAT",
+        "Outputs VSYS to main board",
+        "Configured to prioritize VBUS when available above threshold"
+      ]
+    }
+  ],
+  "board_level_connections": [
+    {
+      "from": "PD Board",
+      "through_connector": "J3",
+      "signals": ["VBUS", "GND", "ST_SDA", "ST_SCL", "DIFF90_P", "DIFF90_N"]
+    },
+    {
+      "to": "Main Board",
+      "through_connector": "J1",
+      "signals": ["VSYS", "GND", "GPIO4", "GPIO5", "GPIO6", "GPIO7", "DIFF90_P", "DIFF90_N"]
+    },
+    {
+      "to": "Battery / toggle harness",
+      "through_connector": "J2",
+      "signals": ["VBAT", "GND", "GPIO6", "GPIO7"]
+    }
+  ],
+  "firmware_implications": [
+    "The BMS board appears not to expose a dedicated smart battery management IC to the MCU.",
+    "The main firmware likely does not control this board directly; it mainly receives VSYS indirectly and may optionally use GPIO6/GPIO7 via the battery toggle header.",
+    "ST_SDA and ST_SCL are routed through this board, so it is part of the physical path to the PD controller even if not logically active."
+  ],
+  "open_points": [
+    "Connector pin population is only partially visible on the page render; cross-board mapping should confirm all unused/reserved pins.",
+    "The exact function of the battery-toggle header still needs system-level interpretation."
+  ]
+}

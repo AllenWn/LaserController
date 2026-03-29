@@ -1,0 +1,91 @@
+{
+  "page_number": 2,
+  "page_title": "Type-C Physical Connector & Protection",
+  "connectors": [
+    {
+      "ref": "J1",
+      "value": "MUSBRM1CBQ0",
+      "role": "USB Type-C receptacle",
+      "pins": [
+        { "pin": "A4", "net": "VBUS" },
+        { "pin": "A9", "net": "VBUS" },
+        { "pin": "B4", "net": "VBUS" },
+        { "pin": "B9", "net": "VBUS" },
+        { "pin": "A5", "net": "PORT_CC1" },
+        { "pin": "B5", "net": "PORT_CC2" },
+        { "pin": "A6", "net": "PORT_D+" },
+        { "pin": "B6", "net": "D+" },
+        { "pin": "A7", "net": "PORT_D-" },
+        { "pin": "B7", "net": "D-" },
+        { "pin": "A8", "net": "SBU1" },
+        { "pin": "B8", "net": "SBU2" },
+        { "pin": "A1", "net": "GND" },
+        { "pin": "A12", "net": "GND" },
+        { "pin": "B1", "net": "GND" },
+        { "pin": "B12", "net": "GND" },
+        { "pin": "G1-G6", "net": "MID_PLATE_GND" },
+        { "pin": "SH1", "net": "SHIELD" },
+        { "pin": "SH2", "net": "SHIELD" }
+      ]
+    }
+  ],
+  "modules": [
+    {
+      "ref": "U3",
+      "value": "TPD6S300ARUKR",
+      "role": "USB Type-C / USB2.0 interface protection",
+      "pins": [
+        { "pin_number": "1", "pin_name": "VPWR", "net": "3V3" },
+        { "pin_number": "10", "pin_name": "VBIAS", "net": "GND" },
+        { "pin_number": "3", "pin_name": "CSBU1", "net": null },
+        { "pin_number": "2", "pin_name": "CSBU2", "net": null },
+        { "pin_number": "4", "pin_name": "CC1", "net": "PORT_CC1" },
+        { "pin_number": "5", "pin_name": "CC2", "net": "PORT_CC2" },
+        { "pin_number": "6", "pin_name": "RPD_G1", "net": "CC1" },
+        { "pin_number": "7", "pin_name": "RPD_G2", "net": "CC2" },
+        { "pin_number": "12", "pin_name": "CCI", "net": "CC1" },
+        { "pin_number": "11", "pin_name": "CC2", "net": "CC2" },
+        { "pin_number": "15", "pin_name": "SBU1", "net": null },
+        { "pin_number": "14", "pin_name": "SBU2", "net": null },
+        { "pin_number": "9", "pin_name": "FLT", "net": "FLT" },
+        { "pin_number": "20", "pin_name": "D1", "net": "PORT_D+" },
+        { "pin_number": "19", "pin_name": "D2", "net": "PORT_D-" },
+        { "pin_number": "16", "pin_name": "NC", "net": null },
+        { "pin_number": "17", "pin_name": "NC", "net": null },
+        { "pin_number": "8", "pin_name": "GND", "net": "GND" },
+        { "pin_number": "13", "pin_name": "GND", "net": "GND" },
+        { "pin_number": "18", "pin_name": "GND", "net": "GND" },
+        { "pin_number": "21", "pin_name": "Thermal Pad", "net": "GND" }
+      ]
+    },
+    {
+      "ref": "U4",
+      "value": "TLV70433DBVR",
+      "role": "3.3V LDO for PD/protection circuitry",
+      "pins": [
+        { "pin_number": "2", "pin_name": "IN", "net": "VBUS" },
+        { "pin_number": "1", "pin_name": "OUT", "net": "3V3" },
+        { "pin_number": "3", "pin_name": "GND", "net": "GND" },
+        { "pin_number": "4", "pin_name": "NC", "net": null },
+        { "pin_number": "5", "pin_name": "NC", "net": null }
+      ]
+    }
+  ],
+  "indicators": [
+    { "ref": "D2", "value": "SML-LX0603SIW-TR", "kind": "fault_indicator", "net": "FLT" }
+  ],
+  "protection": [
+    { "ref": "D3", "value": "SMBJ24A", "kind": "tvs", "nets": ["VBUS", "GND"] }
+  ],
+  "sheet_links": [
+    { "signal": "CC1", "sheet_ref": "STUSB [3C]" },
+    { "signal": "CC2", "sheet_ref": "STUSB [3C]" },
+    { "signal": "D+", "sheet_ref": "External-connector [1B]" },
+    { "signal": "D-", "sheet_ref": "External-connector [1B]" }
+  ],
+  "notes_from_sheet": [
+    "C_CCx short to RPD_Gx to enable dead battery support on CCx.",
+    "USB-C receptacle data pair, CC pair, and VBUS are protected/conditioned before leaving the board.",
+    "FLT drives a visible fault indicator LED referenced to the local 3.3V rail."
+  ]
+}

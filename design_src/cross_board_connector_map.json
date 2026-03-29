@@ -1,0 +1,261 @@
+{
+  "document": "cross_board_connector_map",
+  "version": "v1",
+  "scope": "MainBoard + PD Board + BMS Board + Auxiliary Board",
+  "sources": [
+    "design_src/mainboard/semantic/schematic_page_04_semantic.json",
+    "design_src/mainboard/semantic/schematic_page_08_semantic.json",
+    "design_src/pd/semantic/schematic_page_01_semantic.json",
+    "design_src/pd/semantic/schematic_page_02_semantic.json",
+    "design_src/pd/semantic/schematic_page_03_semantic.json",
+    "design_src/bms/semantic/schematic_page_01_semantic.json",
+    "design_src/bms/semantic/schematic_page_02_semantic.json",
+    "design_src/auxiliary/semantic/schematic_page_01_semantic.json",
+    "design_src/auxiliary/semantic/schematic_page_02_semantic.json",
+    "design_src/auxiliary/semantic/schematic_page_03_semantic.json",
+    "design_src/auxiliary/semantic/schematic_page_04_semantic.json",
+    "design_src/auxiliary/semantic/schematic_page_05_semantic.json"
+  ],
+  "boards": {
+    "mainboard": {
+      "connector_summary": [
+        {
+          "ref": "J1",
+          "role": "MainBoard <-> BMS Board",
+          "pins": {
+            "01": "ESP_GPIO4",
+            "02": "ESP_USP-DP",
+            "03": "ESP_GPIO5",
+            "04": "ESP_USP-DN",
+            "05": "ESP_GPIO7",
+            "06": "DIFF90",
+            "08": "ESP_GPIO6",
+            "09": "GND",
+            "10": "VIN"
+          }
+        },
+        {
+          "ref": "J2A/J2B",
+          "role": "MainBoard <-> Sensor/LED board B2B",
+          "pins": {
+            "GPIO4": "ESP_GPIO4",
+            "GPIO5": "ESP_GPIO5",
+            "GPIO6": "ESP_GPIO6",
+            "GPIO6_alias": "ESP_GPIO7 on same node at this connector",
+            "3V3": "DVDD_3V3",
+            "GND": "GND"
+          }
+        }
+      ]
+    },
+    "bms_board": {
+      "connector_summary": [
+        {
+          "ref": "J1",
+          "role": "BMS Board <-> MainBoard",
+          "pins": {
+            "01": "GPIO4",
+            "02": "DIFF90_P",
+            "03": "GPIO5",
+            "04": "DIFF90_N",
+            "05": "GPIO7",
+            "06": "GPIO6",
+            "09": "GND",
+            "10": "VSYS"
+          }
+        },
+        {
+          "ref": "J3",
+          "role": "BMS Board <-> PD Board",
+          "pins": {
+            "01": "GND",
+            "02": "VBUS",
+            "07": "DIFF90_P",
+            "08": "ST_SDA",
+            "09": "DIFF90_N",
+            "10": "ST_SCL"
+          }
+        },
+        {
+          "ref": "J2",
+          "role": "Battery toggle header",
+          "pins": {
+            "1": "GPIO7",
+            "2": "GPIO6",
+            "7": "VBAT",
+            "8": "GND"
+          }
+        }
+      ]
+    },
+    "pd_board": {
+      "connector_summary": [
+        {
+          "ref": "J2",
+          "role": "PD Board <-> BMS Board",
+          "pins": {
+            "01": "GND",
+            "02": "VSINK",
+            "05": "DIFF90_P",
+            "07": "DIFF90_N",
+            "08": "ST_SDA",
+            "10": "ST_SCL"
+          }
+        }
+      ]
+    },
+    "auxiliary_board": {
+      "connector_summary": [
+        {
+          "ref": "J1",
+          "role": "Auxiliary Board host connector",
+          "pins": {
+            "1": "VDD_3V3",
+            "2": "I2C_SCL",
+            "3": "I2C_SDA",
+            "4": "GPIO_INT_A",
+            "5": "GND"
+          }
+        }
+      ]
+    }
+  },
+  "resolved_cross_board_paths": [
+    {
+      "path_id": "pd_i2c_sda",
+      "firmware_endpoint": {
+        "mcu_gpio": 4,
+        "mainboard_net": "ESP_GPIO4"
+      },
+      "path_segments": [
+        "MainBoard J1 pin01 -> BMS J1 pin01",
+        "BMS board maps GPIO4 <-> ST_SDA",
+        "BMS J3 pin08 -> PD J2 pin08",
+        "PD J2 pin08 -> STUSB4500 SDA"
+      ],
+      "remote_device": "STUSB4500",
+      "remote_signal": "SDA",
+      "interface_type": "I2C",
+      "firmware_meaning": "Optional PD-controller supervisory access",
+      "confidence": "high"
+    },
+    {
+      "path_id": "pd_i2c_scl",
+      "firmware_endpoint": {
+        "mcu_gpio": 5,
+        "mainboard_net": "ESP_GPIO5"
+      },
+      "path_segments": [
+        "MainBoard J1 pin03 -> BMS J1 pin03",
+        "BMS board maps GPIO5 <-> ST_SCL",
+        "BMS J3 pin10 -> PD J2 pin10",
+        "PD J2 pin10 -> STUSB4500 SCL"
+      ],
+      "remote_device": "STUSB4500",
+      "remote_signal": "SCL",
+      "interface_type": "I2C",
+      "firmware_meaning": "Optional PD-controller supervisory access",
+      "confidence": "high"
+    },
+    {
+      "path_id": "battery_toggle_gpio7",
+      "firmware_endpoint": {
+        "mcu_gpio": 7,
+        "mainboard_net": "ESP_GPIO7"
+      },
+      "path_segments": [
+        "MainBoard J1 pin05 -> BMS J1 pin05",
+        "BMS J1 pin05 GPIO7 -> BMS J2 pin1"
+      ],
+      "remote_device": "Battery toggle header",
+      "remote_signal": "GPIO7",
+      "interface_type": "digital_gpio",
+      "firmware_meaning": "External harness / toggle line, exact function not yet locked",
+      "confidence": "high"
+    },
+    {
+      "path_id": "battery_toggle_gpio6",
+      "firmware_endpoint": {
+        "mcu_gpio": 6,
+        "mainboard_net": "ESP_GPIO6"
+      },
+      "path_segments": [
+        "MainBoard J1 pin08 -> BMS J1 pin06",
+        "BMS J1 pin06 GPIO6 -> BMS J2 pin2"
+      ],
+      "remote_device": "Battery toggle header",
+      "remote_signal": "GPIO6",
+      "interface_type": "digital_gpio",
+      "firmware_meaning": "External harness / toggle line, exact function not yet locked",
+      "confidence": "high"
+    },
+    {
+      "path_id": "system_power_to_mainboard",
+      "firmware_endpoint": {
+        "board_net": "VIN",
+        "board": "MainBoard"
+      },
+      "path_segments": [
+        "PD board negotiates and generates VSINK",
+        "BMS board receives VBUS from PD board and VBAT from battery input",
+        "TPS2121 selects source and generates VSYS",
+        "BMS J1 pin10 VSYS -> MainBoard J1 pin10 VIN"
+      ],
+      "remote_device": "TPS2121 + STUSB4500 power path",
+      "remote_signal": "VSYS/VIN",
+      "interface_type": "power_path",
+      "firmware_meaning": "System supply path, not a direct MCU logic interface",
+      "confidence": "high"
+    }
+  ],
+  "partially_resolved_paths": [
+    {
+      "path_id": "usb_diff_pair_through_bms_pd",
+      "observed_segments": [
+        "MainBoard J1 pin02 = ESP_USP-DP",
+        "MainBoard J1 pin04 = ESP_USP-DN",
+        "BMS J1 pin02 = DIFF90_P",
+        "BMS J1 pin04 = DIFF90_N",
+        "BMS J3 pin07/09 = DIFF90_P/DIFF90_N",
+        "PD J2 pin05/07 = DIFF90_P/DIFF90_N"
+      ],
+      "issue": "The extracted net names across MainBoard and BMS/PD indicate the differential path exists, but the exact pin-by-pin naming continuity is not fully proven from the current semantic extraction.",
+      "firmware_impact": "Low; this affects board-level USB routing understanding more than supervisory control logic.",
+      "required_action": "Verify against source CAD or a higher-confidence page re-read before using as a locked system map."
+    }
+  ],
+  "unresolved_cross_board_interfaces": [
+    {
+      "path_id": "auxiliary_host_link",
+      "known_board_local_contract": {
+        "power": "VDD_3V3",
+        "bus": ["I2C_SCL", "I2C_SDA"],
+        "interrupt": "GPIO_INT_A"
+      },
+      "downstream_devices": [
+        "MCP23017",
+        "TLC59116",
+        "DRV2605"
+      ],
+      "issue": "The Auxiliary board host-side 5-pin connector is electrically defined, but its mating connector / landing point on the MainBoard is not identified in the current schematic set.",
+      "firmware_impact": "Trigger/button/LED/haptic final interface cannot yet be locked to concrete ESP32 GPIO numbers."
+    },
+    {
+      "path_id": "trigger_source",
+      "candidate_origin": "Auxiliary board buttons via MCP23017",
+      "issue": "Button electrical mapping on the Auxiliary board is clear, but the system-level definition of which button is the laser trigger and how that bus reaches the ESP32 is not yet locked.",
+      "firmware_impact": "Trigger should remain an unresolved external interface in the system contract."
+    },
+    {
+      "path_id": "distance_sensor",
+      "issue": "No explicit distance-sensor IC or dedicated distance interface is locked across the current board set.",
+      "firmware_impact": "Distance remains outside the locked interface set."
+    }
+  ],
+  "system_level_conclusions": [
+    "GPIO4 and GPIO5 are now system-level cross-board signals to the PD controller, not generic spare GPIOs.",
+    "GPIO6 and GPIO7 are system-level cross-board signals to the BMS battery-toggle header, not generic spare GPIOs.",
+    "The Auxiliary board adds a separate host-side I2C plus interrupt interface, but that host landing point is not yet traced to the MainBoard.",
+    "The STUSB4500 is reachable through a physical cross-board chain, but USB-PD protocol ownership remains in hardware, not in the ESP32 firmware."
+  ]
+}

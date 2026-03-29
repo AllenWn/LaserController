@@ -3,14 +3,14 @@
   "version": "v1",
   "mcu": "ESP32-S3-WROOM-1U",
   "source": [
-    "design_src/schematic_page_04_semantic.json",
-    "design_src/schematic_page_05_semantic.json",
-    "design_src/schematic_page_06_semantic.json",
-    "design_src/schematic_page_07_semantic.json",
-    "design_src/schematic_page_08_semantic.json",
-    "design_src/schematic_page_09_semantic.json",
-    "design_src/schematic_page_10_semantic.json",
-    "design_src/schematic_page_11_semantic.json",
+    "design_src/mainboard/semantic/schematic_page_04_semantic.json",
+    "design_src/mainboard/semantic/schematic_page_05_semantic.json",
+    "design_src/mainboard/semantic/schematic_page_06_semantic.json",
+    "design_src/mainboard/semantic/schematic_page_07_semantic.json",
+    "design_src/mainboard/semantic/schematic_page_08_semantic.json",
+    "design_src/mainboard/semantic/schematic_page_09_semantic.json",
+    "design_src/mainboard/semantic/schematic_page_10_semantic.json",
+    "design_src/mainboard/semantic/schematic_page_11_semantic.json",
     "design_src/datasheet_notes/*.md"
   ],
   "rules": {

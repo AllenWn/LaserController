@@ -1,0 +1,32 @@
+{
+  "source_pdf": "design_src/schematic/Auxiliary_Schematic PDF_[No Variations].pdf",
+  "page_count": 5,
+  "rendered_images_dir": "design_src/auxiliary/pages",
+  "pages": [
+    {
+      "page_number": 1,
+      "json": "design_src/auxiliary/semantic/schematic_page_01_semantic.json",
+      "image": "design_src/auxiliary/pages/page-01.png"
+    },
+    {
+      "page_number": 2,
+      "json": "design_src/auxiliary/semantic/schematic_page_02_semantic.json",
+      "image": "design_src/auxiliary/pages/page-02.png"
+    },
+    {
+      "page_number": 3,
+      "json": "design_src/auxiliary/semantic/schematic_page_03_semantic.json",
+      "image": "design_src/auxiliary/pages/page-03.png"
+    },
+    {
+      "page_number": 4,
+      "json": "design_src/auxiliary/semantic/schematic_page_04_semantic.json",
+      "image": "design_src/auxiliary/pages/page-04.png"
+    },
+    {
+      "page_number": 5,
+      "json": "design_src/auxiliary/semantic/schematic_page_05_semantic.json",
+      "image": "design_src/auxiliary/pages/page-05.png"
+    }
+  ]
+}

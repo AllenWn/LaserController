@@ -1,0 +1,58 @@
+{
+  "board": "Auxiliary Board",
+  "source_pdf": "design_src/schematic/Auxiliary_Schematic PDF_[No Variations].pdf",
+  "role_summary": [
+    "Implements user-interface and feedback functions that are not placed directly on the main board.",
+    "Bridges the main board to local buttons, LEDs, and the haptic motor driver through a 5-pin connector.",
+    "Uses a local I2C GPIO expander so the main board only needs I2C plus one interrupt line."
+  ],
+  "key_devices": [
+    {
+      "ref": "U2",
+      "value": "MCP23017T-E/ML",
+      "function": "I2C GPIO expander",
+      "design_relevance": [
+        "Aggregates button inputs",
+        "Generates GPIO interrupt back to host",
+        "Generates LRA_EN control for haptic driver"
+      ]
+    },
+    {
+      "ref": "U1",
+      "value": "TLC59116IRHBR",
+      "function": "I2C LED driver",
+      "design_relevance": [
+        "Drives RGB LED and multiple red LEDs",
+        "Needs only shared I2C access from host side"
+      ]
+    },
+    {
+      "ref": "U4",
+      "value": "DRV2605LDGSR",
+      "function": "Haptic / LRA driver",
+      "design_relevance": [
+        "Controlled over I2C",
+        "Enable input is sourced from GPIO expander, not directly from main MCU"
+      ]
+    }
+  ],
+  "host_interface": {
+    "connector": "J1",
+    "signals": [
+      { "net": "VDD_3V3", "kind": "power_input" },
+      { "net": "I2C_SCL", "kind": "i2c" },
+      { "net": "I2C_SDA", "kind": "i2c" },
+      { "net": "GPIO_INT_A", "kind": "interrupt_output_from_aux_board" },
+      { "net": "GND", "kind": "ground" }
+    ]
+  },
+  "firmware_implications": [
+    "The physical trigger/buttons may not land directly on ESP32 GPIOs; they are likely observable through the MCP23017 over I2C.",
+    "User indicators and haptic feedback are auxiliary-board-managed peripherals on the same I2C segment.",
+    "GPIO_INT_A is the likely event line the main MCU can use to avoid pure polling of the expander."
+  ],
+  "open_points": [
+    "Cross-board mapping is still needed to prove which main-board connector/pins carry I2C_SCL, I2C_SDA, and GPIO_INT_A.",
+    "The exact intended semantic role of each button still depends on system-level UX definition, even though the electrical mapping is now clear."
+  ]
+}

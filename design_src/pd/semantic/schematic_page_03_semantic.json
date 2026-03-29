@@ -1,0 +1,36 @@
+{
+  "page_number": 3,
+  "page_title": "External Connector",
+  "connectors": [
+    {
+      "ref": "J2",
+      "value": "SFM-105-12-L-D-A",
+      "role": "Board-to-board external connector",
+      "pins": [
+        { "pin": "01", "net": "GND" },
+        { "pin": "02", "net": "VSINK" },
+        { "pin": "05", "net": "DIFF90_P", "sheet_refs": ["PHY [2B] D+"] },
+        { "pin": "07", "net": "DIFF90_N", "sheet_refs": ["PHY [2B] D-"] },
+        { "pin": "08", "net": "ST_SDA", "sheet_refs": ["STUSB [3C]"] },
+        { "pin": "10", "net": "ST_SCL", "sheet_refs": ["STUSB [3C]"] }
+      ],
+      "notes": [
+        "Visible sheet content clearly shows GND, VSINK, DIFF90_P, DIFF90_N, ST_SDA, and ST_SCL on J2.",
+        "Pins 03, 04, 06, and 09 are not visibly assigned on this page and should be confirmed from the source CAD if needed."
+      ]
+    }
+  ],
+  "test_points": [
+    { "ref": "TP1", "net": "VSINK" },
+    { "ref": "TP2", "net": "GND" },
+    { "ref": "TP3", "net": "VBUS" },
+    { "ref": "TP4", "net": "3V3" }
+  ],
+  "interfaces": [
+    { "signal": "VSINK", "kind": "power_output", "direction": "to_external_board" },
+    { "signal": "DIFF90_P", "kind": "usb2_diff_pair", "direction": "to_external_board" },
+    { "signal": "DIFF90_N", "kind": "usb2_diff_pair", "direction": "to_external_board" },
+    { "signal": "ST_SDA", "kind": "i2c", "direction": "to_external_board" },
+    { "signal": "ST_SCL", "kind": "i2c", "direction": "to_external_board" }
+  ]
+}

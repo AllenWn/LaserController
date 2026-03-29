@@ -79,10 +79,19 @@ static fsm_outputs_t outputs_for_state(system_state_t state)
     o.clamp_setpoints = false;
     break;
 
-  case SYS_FAULT:
+  case SYS_FAULT_INTERNAL:
   default:
     o.enable_tec_power = false;
     o.enable_ld_power = false;
+    o.ld_mode = LD_MODE_SHUTDOWN;
+    o.want_emission = false;
+    o.clamp_setpoints = true;
+    break;
+
+  case SYS_FAULT_USAGE:
+    // Usage fault keeps controllers powered but blocks emission.
+    o.enable_tec_power = true;
+    o.enable_ld_power = true;
     o.ld_mode = LD_MODE_SHUTDOWN;
     o.want_emission = false;
     o.clamp_setpoints = true;
@@ -97,18 +106,23 @@ fsm_outputs_t fsm_step(const fsm_inputs_t *in)
   const fsm_inputs_t i = in ? *in : (fsm_inputs_t){0};
   system_state_t state = fsm_get_state();
 
-  // Fault always wins.
-  if (i.fault_present && state != SYS_FAULT)
+  // Fault priority: INTERNAL fault always wins over USAGE fault.
+  if (i.internal_fault_present && state != SYS_FAULT_INTERNAL)
   {
-    transition_to(SYS_FAULT);
-    state = SYS_FAULT;
+    transition_to(SYS_FAULT_INTERNAL);
+    state = SYS_FAULT_INTERNAL;
+  }
+  else if (i.usage_fault_present && state != SYS_FAULT_USAGE && state != SYS_FAULT_INTERNAL)
+  {
+    transition_to(SYS_FAULT_USAGE);
+    state = SYS_FAULT_USAGE;
   }
 
   switch (state)
   {
   case SYS_OFF:
     // No explicit ARM input in this design: auto-start power-up sequence.
-    if (!i.fault_present)
+    if (!i.internal_fault_present)
     {
       transition_to(SYS_POWERUP_TEC);
       state = SYS_POWERUP_TEC;
@@ -149,13 +163,22 @@ fsm_outputs_t fsm_step(const fsm_inputs_t *in)
     }
     break;
 
-  case SYS_FAULT:
+  case SYS_FAULT_INTERNAL:
   default:
-    // Latched until an explicit clear is requested AND the fault input is no longer present.
-    if (i.fault_clear && !i.fault_present)
+    // Latched until explicit clear and internal fault source no longer present.
+    if (i.internal_fault_clear && !i.internal_fault_present)
     {
       transition_to(SYS_OFF);
       state = SYS_OFF;
+    }
+    break;
+
+  case SYS_FAULT_USAGE:
+    // Usage fault clear returns to READY if no usage/internal fault remains.
+    if (i.usage_fault_clear && !i.usage_fault_present && !i.internal_fault_present)
+    {
+      transition_to(SYS_READY);
+      state = SYS_READY;
     }
     break;
   }

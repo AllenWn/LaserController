@@ -1,0 +1,68 @@
+{
+  "page_number": 1,
+  "page_title": "Type-C PD PHY STUSB4500",
+  "modules": [
+    {
+      "ref": "U2",
+      "value": "STUSB4500QTR",
+      "role": "USB-C PD sink policy manager / PHY",
+      "pins": [
+        { "pin_number": "24", "pin_name": "VDD", "net": "VDS_FET" },
+        { "pin_number": "18", "pin_name": "VBUS_VS_DISCH", "net": "VDS_FET" },
+        { "pin_number": "21", "pin_name": "VREG_1V2", "net": "DVDD_2V7" },
+        { "pin_number": "23", "pin_name": "VREG_2V7", "net": "DVDD_2V7" },
+        { "pin_number": "12", "pin_name": "ADDR0", "net": "ADDR0_PULLDOWN" },
+        { "pin_number": "13", "pin_name": "ADDR1", "net": "ADDR1_PULLDOWN" },
+        { "pin_number": "11", "pin_name": "A_B_SIDE", "net": null },
+        { "pin_number": "14", "pin_name": "ATTACH", "net": null },
+        { "pin_number": "20", "pin_name": "POWER_OK2", "net": "POWER_OK2_LED" },
+        { "pin_number": "15", "pin_name": "POWER_OK3", "net": "POWER_OK3_LED" },
+        { "pin_number": "22", "pin_name": "VSYS", "net": "GND" },
+        { "pin_number": "16", "pin_name": "VBUS_EN_SNK", "net": "VBUS_EN_SNK" },
+        { "pin_number": "9", "pin_name": "DISCH", "net": "DISCH" },
+        { "pin_number": "1", "pin_name": "CC1DB", "net": "CC1" },
+        { "pin_number": "4", "pin_name": "CC1", "net": "CC1" },
+        { "pin_number": "5", "pin_name": "CC2", "net": "CC2" },
+        { "pin_number": "2", "pin_name": "CC2DB", "net": "CC2" },
+        { "pin_number": "8", "pin_name": "SDA", "net": "ST_SDA" },
+        { "pin_number": "6", "pin_name": "SCL", "net": "ST_SCL" },
+        { "pin_number": "17", "pin_name": "ALERT", "net": null },
+        { "pin_number": "19", "pin_name": "RESET", "net": null },
+        { "pin_number": "3", "pin_name": "NC", "net": null },
+        { "pin_number": "25", "pin_name": "EP", "net": "GND" },
+        { "pin_number": "10", "pin_name": "GND", "net": "GND" }
+      ]
+    }
+  ],
+  "power_path": [
+    {
+      "ref": "T1",
+      "value": "STL6P3LLH6",
+      "kind": "pmos_pass_fet",
+      "path": ["VBUS", "VDS_FET"]
+    },
+    {
+      "ref": "T2",
+      "value": "STL6P3LLH6",
+      "kind": "pmos_pass_fet",
+      "path": ["VDS_FET", "VSINK"]
+    }
+  ],
+  "indicators": [
+    { "ref": "D4", "value": "LSM0603453V", "net": "POWER_OK2_LED" },
+    { "ref": "D5", "value": "LSM0603453V", "net": "POWER_OK3_LED" }
+  ],
+  "interfaces": [
+    { "signal": "CC1", "direction": "bidirectional_cc", "destination": "PHY page [2B]" },
+    { "signal": "CC2", "direction": "bidirectional_cc", "destination": "PHY page [2B]" },
+    { "signal": "ST_SDA", "direction": "i2c", "destination": "External-connector [2B]" },
+    { "signal": "ST_SCL", "direction": "i2c", "destination": "External-connector [2B]" },
+    { "signal": "VSINK", "direction": "power_output", "notes": "Negotiated sink power after VBUS pass-FET stage" }
+  ],
+  "notes_from_sheet": [
+    "I2C address set to 0x28 by pulling ADDR0 and ADDR1 low through 100k resistors.",
+    "STUSB4500 controls a VBUS-to-VSINK sink path through back-to-back PMOS devices T1 and T2.",
+    "VSINK is protected to GND by TVS device D1 (ESDA25P35-1U1M).",
+    "POWER_OK2 and POWER_OK3 are only used locally as LED indicators on this sheet."
+  ]
+}

@@ -1,0 +1,347 @@
+{
+  "document": "firmware_interface_lock",
+  "version": "v2",
+  "mcu": "ESP32-S3-WROOM-1U",
+  "scope": "System-level lock after integrating MainBoard, PD Board, BMS Board, and Auxiliary Board information",
+  "sources": [
+    "design_src/esp32_firmware_interface_map.json",
+    "design_src/cross_board_connector_map.json",
+    "design_src/mainboard/semantic/*.json",
+    "design_src/pd/semantic/*.json",
+    "design_src/bms/semantic/*.json",
+    "design_src/auxiliary/semantic/*.json",
+    "design_src/datasheet_notes/*.md"
+  ],
+  "rules": {
+    "strapping_pins_reserved": ["GPIO0", "GPIO3", "GPIO45", "GPIO46"],
+    "fail_safe_default": "all safety-related outputs disabled or safe-clamped until explicit supervisor state enables them",
+    "unknown_field_policy": "mark as unresolved_system_interface and do not consume as locked firmware API",
+    "cross_board_policy": "treat connector-correlated paths as locked only when both electrical path and endpoint role are supported by the current schematic set"
+  },
+  "locked_direct_mainboard_interfaces": [
+    {
+      "gpio": 15,
+      "net": "PWR_TEC_EN",
+      "direction": "output",
+      "kind": "power_enable",
+      "active_level": "high_enable",
+      "system_role": "internal_fault_class_power_sequencing",
+      "locked_for_firmware": true
+    },
+    {
+      "gpio": 16,
+      "net": "PWR_TEC_GOOD",
+      "direction": "input",
+      "kind": "power_good",
+      "active_level": "high_good",
+      "system_role": "internal_fault_class_power_health",
+      "locked_for_firmware": true
+    },
+    {
+      "gpio": 17,
+      "net": "PWR_LD_EN",
+      "direction": "output",
+      "kind": "power_enable",
+      "active_level": "high_enable",
+      "system_role": "internal_fault_class_power_sequencing",
+      "locked_for_firmware": true
+    },
+    {
+      "gpio": 18,
+      "net": "PWR_LD_PGOOD",
+      "direction": "input",
+      "kind": "power_good",
+      "active_level": "high_good",
+      "system_role": "internal_fault_class_power_health",
+      "locked_for_firmware": true
+    },
+    {
+      "gpio": 13,
+      "net": "LD_SBDN",
+      "direction": "output",
+      "kind": "three_level_state_control",
+      "active_level": {
+        "low": "shutdown",
+        "high_z": "standby",
+        "high": "operation"
+      },
+      "system_role": "primary_fast_laser_state_gate",
+      "locked_for_firmware": true
+    },
+    {
+      "gpio": 21,
+      "net": "LD_PCN",
+      "direction": "output",
+      "kind": "functional_bank_select",
+      "active_level": {
+        "low": "select_LISL",
+        "high": "select_LISH"
+      },
+      "board_revision_note": "Current board ties LISH to GND; PCN is not a primary safety control.",
+      "locked_for_firmware": true
+    },
+    {
+      "gpio": 14,
+      "net": "LD_LPGD",
+      "direction": "input",
+      "kind": "digital_loop_good",
+      "active_level": "high_good",
+      "system_role": "internal_fault_class_ld_health",
+      "locked_for_firmware": true
+    },
+    {
+      "gpio": 47,
+      "net": "TEC_TEMPGD",
+      "direction": "input",
+      "kind": "digital_temperature_good",
+      "active_level": "high_good",
+      "system_role": "internal_fault_class_tec_health",
+      "locked_for_firmware": true
+    },
+    {
+      "gpio": 1,
+      "net": "LD_TMO",
+      "direction": "input",
+      "kind": "adc_monitor",
+      "system_role": "optional_analog_telemetry_or_threshold_fault",
+      "locked_for_firmware": true
+    },
+    {
+      "gpio": 2,
+      "net": "LD_LIO",
+      "direction": "input",
+      "kind": "adc_monitor",
+      "system_role": "optional_analog_telemetry_or_threshold_fault",
+      "locked_for_firmware": true
+    },
+    {
+      "gpio": 8,
+      "net": "TEC_TMO",
+      "direction": "input",
+      "kind": "adc_monitor",
+      "system_role": "optional_analog_telemetry_or_threshold_fault",
+      "locked_for_firmware": true
+    },
+    {
+      "gpio": 9,
+      "net": "TEC_ITEC",
+      "direction": "input",
+      "kind": "adc_monitor",
+      "system_role": "optional_analog_telemetry_or_threshold_fault",
+      "locked_for_firmware": true
+    },
+    {
+      "gpio": 10,
+      "net": "TEC_VTEC",
+      "direction": "input",
+      "kind": "adc_monitor",
+      "system_role": "optional_analog_telemetry_or_threshold_fault",
+      "locked_for_firmware": true
+    },
+    {
+      "gpio": 11,
+      "net": "DAC_SDA",
+      "direction": "bidirectional",
+      "kind": "i2c",
+      "endpoint": "DAC80502 SDA",
+      "system_role": "analog_setpoint_control",
+      "locked_for_firmware": true
+    },
+    {
+      "gpio": 12,
+      "net": "DAC_SCL",
+      "direction": "output/bidirectional_bus_clock",
+      "kind": "i2c",
+      "endpoint": "DAC80502 SCL",
+      "system_role": "analog_setpoint_control",
+      "locked_for_firmware": true
+    },
+    {
+      "gpio": 38,
+      "net": "IMU_SDA-SDI",
+      "direction": "bidirectional",
+      "kind": "spi_data",
+      "endpoint": "LSM6DSO SDI",
+      "locked_for_firmware": true
+    },
+    {
+      "gpio": 39,
+      "net": "IMU_CS",
+      "direction": "output",
+      "kind": "spi_chip_select",
+      "endpoint": "LSM6DSO CS",
+      "locked_for_firmware": true
+    },
+    {
+      "gpio": 40,
+      "net": "IMU_SCL-SCLK",
+      "direction": "output",
+      "kind": "spi_clock",
+      "endpoint": "LSM6DSO SCL/SPC",
+      "locked_for_firmware": true
+    },
+    {
+      "gpio": 41,
+      "net": "IMU_SDO",
+      "direction": "input",
+      "kind": "spi_data",
+      "endpoint": "LSM6DSO SDO/SA0",
+      "locked_for_firmware": true
+    },
+    {
+      "gpio": 42,
+      "net": "IMU_INT2",
+      "direction": "input",
+      "kind": "imu_interrupt_optional",
+      "endpoint": "LSM6DSO INT2",
+      "locked_for_firmware": true
+    },
+    {
+      "gpio": 35,
+      "net": "ERM_SDA",
+      "direction": "bidirectional",
+      "kind": "i2c",
+      "endpoint": "MainBoard DRV2605 SDA",
+      "system_role": "ui_haptic_non_safety",
+      "locked_for_firmware": true
+    },
+    {
+      "gpio": 36,
+      "net": "ERM_SCL",
+      "direction": "output/bidirectional_bus_clock",
+      "kind": "i2c",
+      "endpoint": "MainBoard DRV2605 SCL",
+      "system_role": "ui_haptic_non_safety",
+      "locked_for_firmware": true
+    },
+    {
+      "gpio": 37,
+      "net": "ERM_TRIG",
+      "direction": "output",
+      "kind": "functional_trigger",
+      "system_role": "ui_haptic_non_safety",
+      "board_risk": "same node also appears as GN_LD_EN in mainboard extraction; treat as hardware-coupled until CAD confirmation",
+      "locked_for_firmware": false
+    },
+    {
+      "gpio": 48,
+      "net": "ERM_EN",
+      "direction": "output",
+      "kind": "device_enable",
+      "system_role": "ui_haptic_non_safety",
+      "locked_for_firmware": true
+    }
+  ],
+  "locked_cross_board_interfaces": [
+    {
+      "mcu_gpio": 4,
+      "mainboard_net": "ESP_GPIO4",
+      "cross_board_role": "pd_i2c_sda",
+      "remote_device": "STUSB4500",
+      "remote_net": "ST_SDA",
+      "direction": "bidirectional",
+      "kind": "i2c",
+      "firmware_use": "optional_pd_supervision",
+      "locked_for_firmware": true
+    },
+    {
+      "mcu_gpio": 5,
+      "mainboard_net": "ESP_GPIO5",
+      "cross_board_role": "pd_i2c_scl",
+      "remote_device": "STUSB4500",
+      "remote_net": "ST_SCL",
+      "direction": "output/bidirectional_bus_clock",
+      "kind": "i2c",
+      "firmware_use": "optional_pd_supervision",
+      "locked_for_firmware": true
+    },
+    {
+      "mcu_gpio": 6,
+      "mainboard_net": "ESP_GPIO6",
+      "cross_board_role": "battery_toggle_header",
+      "remote_device": "BMS board J2",
+      "remote_net": "GPIO6",
+      "direction": "digital_io",
+      "firmware_use": "reserved_external_function",
+      "locked_for_firmware": true,
+      "notes": "Electrically traced, but semantic function still not assigned."
+    },
+    {
+      "mcu_gpio": 7,
+      "mainboard_net": "ESP_GPIO7",
+      "cross_board_role": "battery_toggle_header",
+      "remote_device": "BMS board J2",
+      "remote_net": "GPIO7",
+      "direction": "digital_io",
+      "firmware_use": "reserved_external_function",
+      "locked_for_firmware": true,
+      "notes": "Electrically traced, but semantic function still not assigned."
+    }
+  ],
+  "system_interfaces_defined_but_not_gpio_locked": [
+    {
+      "interface_name": "auxiliary_host_bus",
+      "board_local_contract": {
+        "power": "VDD_3V3",
+        "signals": ["I2C_SCL", "I2C_SDA", "GPIO_INT_A", "GND"]
+      },
+      "downstream_devices": [
+        {
+          "device": "MCP23017",
+          "role": "button aggregation and interrupt generation",
+          "addressing": "A0/A1/A2 tied low"
+        },
+        {
+          "device": "TLC59116",
+          "role": "LED driver",
+          "addressing": "A0/A1/A2/A3 tied low"
+        },
+        {
+          "device": "DRV2605",
+          "role": "auxiliary haptic driver",
+          "address": "0x5A"
+        }
+      ],
+      "lock_status": "system_defined_not_mainboard_landed",
+      "firmware_consequence": "Device protocols are known, but the exact ESP32 pins or host controller instance are not yet locked."
+    }
+  ],
+  "explicitly_unlocked_or_removed_from_v1": [
+    {
+      "interface": "trigger_button_direct_gpio",
+      "status_in_v1": "temporary assumption on GPIO4",
+      "status_in_v2": "removed",
+      "reason": "Cross-board analysis shows GPIO4 is part of the PD-board I2C path. Trigger is more likely to come through the Auxiliary board MCP23017, but its host landing is not yet traced."
+    },
+    {
+      "interface": "distance_sensor_direct_gpio",
+      "status_in_v1": "reserved candidate on expansion GPIOs",
+      "status_in_v2": "not locked",
+      "reason": "No explicit distance sensor implementation is present in the current multi-board schematic set."
+    }
+  ],
+  "state_machine_relevant_locked_signals": {
+    "internal_fault_class": [
+      "PWR_TEC_GOOD",
+      "PWR_LD_PGOOD",
+      "LD_LPGD",
+      "TEC_TEMPGD"
+    ],
+    "usage_fault_class": [
+      "IMU computed orientation result"
+    ],
+    "fast_laser_control": [
+      "LD_SBDN"
+    ],
+    "power_sequencing_outputs": [
+      "PWR_TEC_EN",
+      "PWR_LD_EN"
+    ]
+  },
+  "remaining_open_items": [
+    "Trace the Auxiliary board host connector to a concrete MainBoard connector or harness definition.",
+    "Lock the actual trigger source and its semantics from the Auxiliary board button set.",
+    "Confirm whether GPIO6/GPIO7 on the BMS battery-toggle header have any firmware-owned meaning.",
+    "Re-verify the USB differential pair continuity across MainBoard/BMS/PD if USB functional design will be documented at system level."
+  ]
+}

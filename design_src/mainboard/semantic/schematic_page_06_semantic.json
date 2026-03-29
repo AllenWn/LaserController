@@ -1,0 +1,40 @@
+{
+  "page_number": 6,
+  "page_title": "Laser Diode Controller",
+  "modules": [
+    {
+      "ref": "U3",
+      "value": "ATLS6A214D",
+      "pins": [
+        { "pin_number": "1", "pin_name": "SYNC", "net": null },
+        { "pin_number": "4", "pin_name": "SBDN", "net": "LD_SBDN", "sheet_refs": ["ESP32_S3_Module[1B] LD_SBDN"] },
+        { "pin_number": "2", "pin_name": "TMO", "net": "LD_TMO", "sheet_refs": ["ESP32_S3_Module[1B] LD-TMO"] },
+        { "pin_number": "8", "pin_name": "LISL", "net": "DAC_OUTA", "sheet_refs": ["DAC[3B] DAC_OUTA"] },
+        { "pin_number": "9", "pin_name": "LISH", "net": "GND" },
+        { "pin_number": "3", "pin_name": "LPGD", "net": "LD_LPGD", "sheet_refs": ["ESP32_S3_Module[1C] LD-LPGD"] },
+        { "pin_number": "10", "pin_name": "LIO", "net": "LD_LIO", "sheet_refs": ["ESP32_S3_Module[1B] LD-LIO"] },
+        { "pin_number": "5", "pin_name": "PCN", "net": "LD-PCN", "sheet_refs": ["ESP32_S3_Module[1C] LD-PCN"] },
+        { "pin_number": "7", "pin_name": "2.5VR", "net": "LD_2V5_VREF" },
+        { "pin_number": "12", "pin_name": "LDA+", "net": "LD+", "sheet_refs": ["TP3"] },
+        { "pin_number": "11", "pin_name": "LDA+", "net": "LD+", "sheet_refs": ["TP3"] },
+        { "pin_number": "14", "pin_name": "LDA-", "net": "LD-", "sheet_refs": ["TP4"] },
+        { "pin_number": "13", "pin_name": "LDC-", "net": "LDC-", "sheet_refs": ["TP4"] },
+        { "pin_number": "18", "pin_name": "VPS", "net": "VDS_LD_8V0" },
+        { "pin_number": "17", "pin_name": "VPS", "net": "VDS_LD_8V0" },
+        { "pin_number": "6", "pin_name": "PGND", "net": "GND" },
+        { "pin_number": "16", "pin_name": "PGND", "net": "GND" },
+        { "pin_number": "15", "pin_name": "PGND", "net": "GND" }
+      ]
+    }
+  ],
+  "indicators": [
+    { "ref": "D1", "value": "APT1608ZGCK", "function": "Loop Good Indicator", "net": "LD_LPGD" }
+  ],
+  "notes_from_sheet": [
+    "PCN is used to switch between LISL and LISH",
+    "LISL/LISH take 0-2.5V signal map to 0-6A output linearly",
+    "LD_2V5_VREF maximum output current 10mA",
+    "Resistor network on SBDN set SBDN in three levels: GPIO LOW -> 0V; GPIO HIGH -> 3V3; GPIO Hi-Z -> 2V25",
+    "LISH is hard-tied to GND on this sheet, so only the LISL bank is actively driven by DAC_OUTA."
+  ]
+}

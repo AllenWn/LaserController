@@ -71,6 +71,19 @@ typedef struct
 
 typedef struct
 {
+  bool device_present;
+  bool i2c_ok;
+  bool attached_known;
+  bool attached;
+  bool contract_valid_known;
+  bool contract_valid;
+  bool fault_known;
+  bool fault;
+  TickType_t updated_at;
+} pd_status_t;
+
+typedef struct
+{
   // Module snapshots (latest values written by monitor tasks).
   pwr_status_t pwr;
   ld_digital_status_t ld_dig;
@@ -78,6 +91,7 @@ typedef struct
   ld_analog_status_t ld_ana;
   tec_analog_status_t tec_ana;
   imu_status_t imu;
+  pd_status_t pd;
 
   // Latched system faults (set by supervisor or ISR later).
   uint32_t fault_latch;
@@ -92,6 +106,7 @@ void system_status_update_tec_digital(const tec_digital_status_t *st, TickType_t
 void system_status_update_ld_analog(const ld_analog_status_t *st, TickType_t now);
 void system_status_update_tec_analog(const tec_analog_status_t *st, TickType_t now);
 void system_status_update_imu(const imu_status_t *st, TickType_t now);
+void system_status_update_pd(const pd_status_t *st, TickType_t now);
 
 // Fault latch helpers
 void system_status_fault_latch(uint32_t fault_mask);
@@ -99,4 +114,3 @@ void system_status_fault_clear(uint32_t fault_mask);
 
 // Snapshot read (called by supervisor)
 system_status_snapshot_t system_status_get_snapshot(void);
-

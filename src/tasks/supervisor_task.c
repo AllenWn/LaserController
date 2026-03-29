@@ -15,9 +15,16 @@
 #include "tasks/dac_task.h"
 
 static const char *TAG = "supervisor";
-static const uint32_t FAULT_LATCH_SAFETY_TRIP = (1u << 0);
-static const uint32_t FAULT_LATCH_PWR_DROP = (1u << 1);
-static const uint32_t FAULT_LATCH_PWRUP_TIMEOUT = (1u << 2);
+// Fault classes:
+// - INTERNAL: electrical/control-path faults; force FAULT state and drop EN.
+// - USAGE: procedural/safety-envelope faults; block emission but keep power path alive.
+static const uint32_t FAULT_LATCH_USAGE_IMU = (1u << 0);
+static const uint32_t FAULT_LATCH_INTERNAL_LD_TEC = (1u << 8);
+static const uint32_t FAULT_LATCH_INTERNAL_PWR_DROP = (1u << 9);
+static const uint32_t FAULT_LATCH_INTERNAL_PWRUP_TIMEOUT = (1u << 10);
+static const uint32_t FAULT_MASK_USAGE = (FAULT_LATCH_USAGE_IMU);
+static const uint32_t FAULT_MASK_INTERNAL =
+    (FAULT_LATCH_INTERNAL_LD_TEC | FAULT_LATCH_INTERNAL_PWR_DROP | FAULT_LATCH_INTERNAL_PWRUP_TIMEOUT);
 
 #ifndef POWERUP_TEC_TIMEOUT_MS
 #define POWERUP_TEC_TIMEOUT_MS 1500
@@ -29,6 +36,10 @@ static const uint32_t FAULT_LATCH_PWRUP_TIMEOUT = (1u << 2);
 
 #ifndef FAULT_CLEAR_TRIGGER_RELEASE_SAMPLES
 #define FAULT_CLEAR_TRIGGER_RELEASE_SAMPLES 3
+#endif
+
+#ifndef FAULT_CLEAR_REQUIRE_IMU_SAFE
+#define FAULT_CLEAR_REQUIRE_IMU_SAFE 1
 #endif
 
 static atomic_bool s_trigger;
@@ -89,6 +100,9 @@ static bool compute_permit(uint32_t safety_bits)
   return (safety_bits & required) == required;
 }
 
+static bool has_internal_fault(uint32_t fault_latch) { return (fault_latch & FAULT_MASK_INTERNAL) != 0u; }
+static bool has_usage_fault(uint32_t fault_latch) { return (fault_latch & FAULT_MASK_USAGE) != 0u; }
+
 static void supervisor_task(void *arg)
 {
   (void)arg;
@@ -115,26 +129,43 @@ static void supervisor_task(void *arg)
     const bool pwr_tec_ready = (safety_bits & SAFETY_BIT_PWR_TEC_READY) != 0u;
     const bool pwr_ld_ready = (safety_bits & SAFETY_BIT_PWR_LD_READY) != 0u;
     const bool pwr_ready = pwr_tec_ready && pwr_ld_ready;
-    const bool emit_checks_ok = (safety_bits & (SAFETY_BIT_TEC_OK | SAFETY_BIT_LD_OK | SAFETY_BIT_IMU_ORIENT_OK)) ==
-                                (SAFETY_BIT_TEC_OK | SAFETY_BIT_LD_OK | SAFETY_BIT_IMU_ORIENT_OK);
+    const bool imu_fresh = (snap.imu.updated_at != 0) && !is_stale(now, snap.imu.updated_at, IMU_STATUS_TIMEOUT_MS);
+    const bool imu_safe = imu_fresh && snap.imu.valid && snap.imu.orientation_ok;
+    const bool tec_ok = (safety_bits & SAFETY_BIT_TEC_OK) != 0u;
+    const bool ld_ok = (safety_bits & SAFETY_BIT_LD_OK) != 0u;
+    const bool emit_checks_ok = tec_ok && ld_ok && imu_safe;
 
     uint32_t fault_latch = snap.fault_latch;
 
     // Fault-latch policy:
-    // 1) If non-power safety is lost while FIRING, latch trip fault.
+    // 1) If safety is lost while FIRING, classify and latch:
+    //    - IMU-related => USAGE fault
+    //    - LD/TEC-related => INTERNAL fault
     const bool safety_trip_while_firing = (state_before == SYS_FIRING) && !emit_checks_ok;
     if (safety_trip_while_firing)
     {
-      system_status_fault_latch(FAULT_LATCH_SAFETY_TRIP);
-      fault_latch |= FAULT_LATCH_SAFETY_TRIP;
+      uint32_t mask = 0u;
+      if (!imu_safe)
+      {
+        mask |= FAULT_LATCH_USAGE_IMU;
+      }
+      if (!ld_ok || !tec_ok)
+      {
+        mask |= FAULT_LATCH_INTERNAL_LD_TEC;
+      }
+      if (mask != 0u)
+      {
+        system_status_fault_latch(mask);
+        fault_latch |= mask;
+      }
     }
 
     // 2) If power-good is lost after power-up sequence, latch power-drop fault.
     const bool pwr_drop_runtime = (state_before == SYS_READY || state_before == SYS_FIRING) && !pwr_ready;
     if (pwr_drop_runtime)
     {
-      system_status_fault_latch(FAULT_LATCH_PWR_DROP);
-      fault_latch |= FAULT_LATCH_PWR_DROP;
+      system_status_fault_latch(FAULT_LATCH_INTERNAL_PWR_DROP);
+      fault_latch |= FAULT_LATCH_INTERNAL_PWR_DROP;
     }
 
     // 3) Power-up timeout protection.
@@ -142,13 +173,13 @@ static void supervisor_task(void *arg)
     const TickType_t ld_timeout = pdMS_TO_TICKS(POWERUP_LD_TIMEOUT_MS);
     if (state_before == SYS_POWERUP_TEC && (now - state_enter_tick) > tec_timeout)
     {
-      system_status_fault_latch(FAULT_LATCH_PWRUP_TIMEOUT);
-      fault_latch |= FAULT_LATCH_PWRUP_TIMEOUT;
+      system_status_fault_latch(FAULT_LATCH_INTERNAL_PWRUP_TIMEOUT);
+      fault_latch |= FAULT_LATCH_INTERNAL_PWRUP_TIMEOUT;
     }
     if (state_before == SYS_POWERUP_LD && (now - state_enter_tick) > ld_timeout)
     {
-      system_status_fault_latch(FAULT_LATCH_PWRUP_TIMEOUT);
-      fault_latch |= FAULT_LATCH_PWRUP_TIMEOUT;
+      system_status_fault_latch(FAULT_LATCH_INTERNAL_PWRUP_TIMEOUT);
+      fault_latch |= FAULT_LATCH_INTERNAL_PWRUP_TIMEOUT;
     }
 
     // Clear policy (v1): operator must release trigger for N consecutive samples.
@@ -163,32 +194,56 @@ static void supervisor_task(void *arg)
     {
       trigger_release_cnt = 0;
     }
-    const bool fault_clear =
-        (fault_latch != 0u) && permit_raw && (trigger_release_cnt >= FAULT_CLEAR_TRIGGER_RELEASE_SAMPLES);
-    if (fault_clear)
+    // Clear policy:
+    // - Require trigger released for N consecutive samples.
+    // - Do NOT gate on permit_raw here, because FAULT drives EN low and that
+    //   intentionally makes PGOOD-based permit conditions false.
+    // - Optionally require IMU orientation safe before allowing re-arm sequence.
+    bool clear_safety_ok = true;
+#if FAULT_CLEAR_REQUIRE_IMU_SAFE
+    clear_safety_ok = imu_safe;
+#endif
+    const bool release_ok = (trigger_release_cnt >= FAULT_CLEAR_TRIGGER_RELEASE_SAMPLES);
+    const bool internal_present = has_internal_fault(fault_latch);
+    const bool usage_present = has_usage_fault(fault_latch);
+    const bool clear_internal = internal_present && clear_safety_ok && release_ok;
+    const bool clear_usage = usage_present && clear_safety_ok && release_ok;
+    if (clear_internal || clear_usage)
     {
-      system_status_fault_clear(0xFFFFFFFFu);
-      fault_latch = 0u;
+      uint32_t clear_mask = 0u;
+      if (clear_internal)
+      {
+        clear_mask |= FAULT_MASK_INTERNAL;
+      }
+      if (clear_usage)
+      {
+        clear_mask |= FAULT_MASK_USAGE;
+      }
+      system_status_fault_clear(clear_mask);
+      fault_latch &= ~clear_mask;
     }
 
-    const bool fault_present = (fault_latch != 0u);
-    const bool permit = permit_raw && !fault_present;
+    const bool internal_fault_present = has_internal_fault(fault_latch);
+    const bool usage_block = has_usage_fault(fault_latch);
+    const bool permit = permit_raw && !internal_fault_present && !usage_block;
 
     fsm_inputs_t in = {
         .trigger = trigger,
         .permit = permit,
         .pwr_tec_ready = pwr_tec_ready,
         .pwr_ld_ready = pwr_ld_ready,
-        .fault_present = fault_present,
-        .fault_clear = fault_clear,
+        .internal_fault_present = internal_fault_present,
+        .usage_fault_present = usage_block,
+        .internal_fault_clear = clear_internal,
+        .usage_fault_clear = clear_usage,
     };
     const fsm_outputs_t out = fsm_step(&in);
 
     // Apply outputs to hardware (with safety overrides).
-    (void)board_io_apply_fsm_outputs(&out, permit, fault_present);
+    (void)board_io_apply_fsm_outputs(&out, permit, internal_fault_present);
 
     // DAC policy: clamp whenever FSM requests clamp OR safety is not permitting OR fault is present.
-    const bool clamp = out.clamp_setpoints || !permit || fault_present;
+    const bool clamp = out.clamp_setpoints || !permit || internal_fault_present;
     uint16_t ld_code = DAC_LD_CODE_SAFE_TBD;
     uint16_t tec_code = DAC_TEC_CODE_READY_TBD;
     if (out.state == SYS_FIRING && permit && !clamp)
@@ -221,11 +276,12 @@ static void supervisor_task(void *arg)
     {
       last_log = now;
       ESP_LOGI(TAG,
-               "st=%d trg=%d permit=%d bits=0x%08X faults=0x%08X out{tec=%d ld=%d ld_mode=%d emit=%d clamp=%d} "
-               "imu{ok=%d ang=%.1f}",
+               "st=%d trg=%d permit=%d bits=0x%08X faults=0x%08X int=%d use=%d out{tec=%d ld=%d ld_mode=%d emit=%d "
+               "clamp=%d} imu{ok=%d ang=%.1f}",
                (int)st, in.trigger ? 1 : 0, permit ? 1 : 0, (unsigned)safety_bits,
-               (unsigned)fault_latch, out.enable_tec_power ? 1 : 0, out.enable_ld_power ? 1 : 0, (int)out.ld_mode,
-               out.want_emission ? 1 : 0, out.clamp_setpoints ? 1 : 0, snap.imu.orientation_ok ? 1 : 0,
+               (unsigned)fault_latch, internal_fault_present ? 1 : 0, usage_block ? 1 : 0, out.enable_tec_power ? 1 : 0,
+               out.enable_ld_power ? 1 : 0, (int)out.ld_mode, out.want_emission ? 1 : 0,
+               out.clamp_setpoints ? 1 : 0, snap.imu.orientation_ok ? 1 : 0,
                (double)snap.imu.angle_from_down_deg);
     }
   }

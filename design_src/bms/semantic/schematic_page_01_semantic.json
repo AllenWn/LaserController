@@ -1,0 +1,71 @@
+{
+  "page_number": 1,
+  "page_title": "External Connection",
+  "connectors": [
+    {
+      "ref": "J1",
+      "value": "TFM-105-12-L-D-A",
+      "section": "B2B - Main Board",
+      "pins": [
+        { "pin": "01", "net": "GPIO4", "sheet_refs": ["Connectors[2C] ST_SDA"] },
+        { "pin": "03", "net": "GPIO5", "sheet_refs": ["Connectors[2C] ST_SCL"] },
+        { "pin": "05", "net": "GPIO7" },
+        { "pin": "09", "net": "GND" },
+        { "pin": "02", "net": "DIFF90_P", "sheet_refs": ["to D+"] },
+        { "pin": "04", "net": "DIFF90_N", "sheet_refs": ["to D-"] },
+        { "pin": "06", "net": "GPIO6" },
+        { "pin": "10", "net": "VSYS" }
+      ],
+      "notes": [
+        "Page text explicitly ties ST_SDA to GPIO4 and ST_SCL to GPIO5 at this connector."
+      ]
+    },
+    {
+      "ref": "J3",
+      "value": "TFM-105-12-L-D-A",
+      "section": "B2B - USB-PD Board",
+      "pins": [
+        { "pin": "01", "net": "GND" },
+        { "pin": "07", "net": "DIFF90_P", "sheet_refs": ["Connectors[2B] D+"] },
+        { "pin": "09", "net": "DIFF90_N", "sheet_refs": ["Connectors[2B] D-"] },
+        { "pin": "08", "net": "ST_SDA", "sheet_refs": ["Connectors[1B]"] },
+        { "pin": "10", "net": "ST_SCL", "sheet_refs": ["Connectors[1B]"] },
+        { "pin": "02", "net": "VBUS" }
+      ],
+      "notes": [
+        "Visible sheet content does not show all J3 pins populated.",
+        "VBUS and GND are provided on the PD-board side connector."
+      ]
+    },
+    {
+      "ref": "J2",
+      "value": "MPO11983",
+      "section": "Battery Toggle Pins",
+      "pins": [
+        { "pin": "1", "net": "GPIO7" },
+        { "pin": "2", "net": "GPIO6" },
+        { "pin": "7", "net": "VBAT" },
+        { "pin": "8", "net": "GND" }
+      ],
+      "notes": [
+        "The visible page content shows GPIO7 and GPIO6 routed into the battery toggle header.",
+        "Intermediate pins on J2 are not visibly labeled on this sheet snapshot."
+      ]
+    }
+  ],
+  "interfaces": [
+    { "signal": "ST_SDA", "kind": "i2c", "path": "PD Board <-> BMS <-> Main Board" },
+    { "signal": "ST_SCL", "kind": "i2c", "path": "PD Board <-> BMS <-> Main Board" },
+    { "signal": "DIFF90_P", "kind": "usb2_diff_pair", "path": "PD Board <-> BMS <-> Main Board" },
+    { "signal": "DIFF90_N", "kind": "usb2_diff_pair", "path": "PD Board <-> BMS <-> Main Board" },
+    { "signal": "VSYS", "kind": "power_output_to_mainboard" },
+    { "signal": "VBUS", "kind": "power_input_from_pd_board" },
+    { "signal": "VBAT", "kind": "battery_input" },
+    { "signal": "GPIO6", "kind": "digital_io_to_battery_toggle_header" },
+    { "signal": "GPIO7", "kind": "digital_io_to_battery_toggle_header" }
+  ],
+  "notes_from_sheet": [
+    "This board sits physically between the main board and the PD board for both power and sideband routing.",
+    "It also exposes GPIO6/GPIO7 together with VBAT/GND on a dedicated battery-toggle connector."
+  ]
+}

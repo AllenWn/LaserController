@@ -16,8 +16,11 @@
     }
   ],
   "test_points": [
-    { "ref": "TP18", "value": "5190tr", "net": "VISIBLE_LASER_OUT" },
+    { "ref": "TP19", "value": "5190tr", "net": "VISIBLE_LASER_OUT" },
     { "ref": "TP20", "value": "5190tr", "net": "GND" }
+  ],
+  "notes_from_sheet": [
+    "VIN can be sourced from VDS_TEC_5V0 through R52 (0R default) or from DVDD_3V3 through optional R53 (0R DNP).",
+    "R55 provides a pull-down on GN_LD_EN so the visible-laser switch defaults OFF at boot."
   ]
 }
-

@@ -1,0 +1,59 @@
+{
+  "board": "PD Board",
+  "source_pdf": "design_src/schematic/PD_Schematic PDF_[No Variations].pdf",
+  "role_summary": [
+    "Implements USB Type-C sink-side physical interface and PD negotiation support.",
+    "Generates a protected switched sink output rail named VSINK from VBUS.",
+    "Exports I2C access to the STUSB4500 controller through an external connector.",
+    "Exports a USB2 differential pair from the receptacle/protection path to an external board."
+  ],
+  "key_devices": [
+    {
+      "ref": "U2",
+      "value": "STUSB4500QTR",
+      "function": "USB-C PD sink controller / policy manager",
+      "design_relevance": [
+        "Own I2C control/status interface",
+        "Controls sink-side VBUS path enable",
+        "Own CC1/CC2 attachment and PD negotiation logic"
+      ]
+    },
+    {
+      "ref": "U3",
+      "value": "TPD6S300ARUKR",
+      "function": "USB-C / USB2 port protection",
+      "design_relevance": [
+        "Provides fault indication",
+        "Conditions CC and D+/D- signals before they leave the board"
+      ]
+    },
+    {
+      "ref": "U4",
+      "value": "TLV70433DBVR",
+      "function": "Local 3.3V LDO from VBUS"
+    }
+  ],
+  "external_interfaces": [
+    {
+      "connector": "J2",
+      "signals_visible_on_sheet": [
+        "GND",
+        "VSINK",
+        "DIFF90_P",
+        "DIFF90_N",
+        "ST_SDA",
+        "ST_SCL"
+      ]
+    }
+  ],
+  "firmware_implications": [
+    "The ESP32 is unlikely to implement USB-PD directly; the STUSB4500 performs the PD role.",
+    "Firmware may interact with this board over I2C if the board-to-board ST_SDA/ST_SCL nets reach the main MCU.",
+    "VSINK is a power-domain output, not an MCU logic signal.",
+    "The board may provide a fault indication path via the FLT node, but its system-level destination is not visible inside this 3-page schematic alone."
+  ],
+  "open_points": [
+    "Cross-board mapping is still needed to prove where J2 lands in the overall system.",
+    "J2 pins 03/04/06/09 are not clearly assigned in visible sheet content and may require CAD-origin verification if they matter later."
+  ]
+}

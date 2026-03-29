@@ -1,38 +1,106 @@
-# LSM6DSO (IMU)
+# LSM6DSO
 
-Source: `design_src/datasheet/lsm6dso.pdf`
+Source PDF: `design_src/datasheet/lsm6dso.pdf`
 
-## Serial Interface Options
-- Registers accessible via I2C or SPI (pins are shared).
-- SPI compatibility: SPI modes 0 and 3.
+Firmware-oriented notes for the **LSM6DSO** IMU used on the `MainBoard`.
 
-## Mode Selection (`CS`)
-- `CS` controls I2C/SPI selection:
-  - `CS = 1`: SPI idle / I2C communication enabled
-  - `CS = 0`: SPI communication mode / I2C disabled
+## 1. Device role
 
-## I2C Address
-- 7-bit slave address pattern: `110101x`
-- `SDO/SA0` sets the LSB:
-  - `SA0 = 0` (to GND): `1101010b` = `0x6A`
-  - `SA0 = 1` (to VDD): `1101011b` = `0x6B`
+- 6-axis inertial sensor
+- 3-axis accelerometer + 3-axis gyroscope
+- Supports:
+  - `SPI`
+  - `I²C`
+  - `I3C` related modes in the broader family documentation
 
-## Identity Register
-- `WHO_AM_I` register: address `0x0F`
-- Fixed value: `0x6C`
+In this project it is used as a safety-relevant orientation sensor.
 
-## Interrupts
-- `INT1` and `INT2` pins support interrupt signaling (configurable via registers).
+## 2. Interface selection
 
-### Interrupt Output Electrical / Polarity (CTRL3_C)
-The interrupt pins are configurable; do not assume a fixed polarity/driver.
+The part supports both SPI and I²C style host interfaces.
 
-- Activation level: `H_LACTIVE`
-  - `0` (default): interrupt output pins **active high**
-  - `1`: interrupt output pins **active low**
-- Output driver: `PP_OD`
-  - `0` (default): **push-pull** mode
-  - `1`: **open-drain** mode
+Project implication:
 
-## Pins Used On This PCB (from schematic)
-- `CS`, `SCL/SPC`, `SDA/SDI`, `SDO`, `INT2` are routed to the ESP32.
+- The mainboard routes it in an SPI-style connection
+- Firmware should treat it as an SPI peripheral in the current design
+
+## 3. Identity and addressing
+
+Datasheet register:
+
+- `WHO_AM_I = 0x6C`
+
+If operated in I²C mode, the typical addresses are:
+
+- `0x6A`
+- `0x6B`
+
+depending on `SDO/SA0`.
+
+Firmware implication:
+
+- Even in SPI mode, `WHO_AM_I = 0x6C` is the basic bring-up check
+
+## 4. Interrupt outputs
+
+The device provides:
+
+- `INT1`
+- `INT2`
+
+Datasheet capability:
+
+- interrupt polarity can be configured
+- outputs can be push-pull or open-drain
+
+Project implication:
+
+- The final interrupt polarity cannot be assumed until firmware configures the part
+- The current project still supports pure polling, with interrupt use as an optional later enhancement
+
+## 5. Pins relevant to this board
+
+From the mainboard schematic:
+
+- `CS`
+- `SCL/SPC`
+- `SDA/SDI`
+- `SDO/SA0`
+- `INT2`
+
+`INT1` is not currently routed in the mainboard design.
+
+## 6. What firmware must do
+
+At minimum:
+
+- initialize the SPI bus
+- verify device identity with `WHO_AM_I`
+- configure ODR / scale / filtering as needed
+- read acceleration data
+- convert raw measurements into orientation logic
+
+## 7. Safety meaning in this project
+
+The IMU does not produce a direct “safe / unsafe” hardware output by itself.
+
+Firmware responsibility is to:
+
+- read the data
+- compute tilt / pose
+- compare against the allowed operating range
+- feed that result into the safety state machine
+
+## 8. Project-specific interpretation
+
+The LSM6DSO is:
+
+- a safety-relevant sensing device
+- communication-based, not GPIO-based
+- slower than a hardwired digital fault line, but richer in information
+
+## 9. Open items for final bring-up
+
+- Confirm final ODR and filter settings
+- Confirm the exact orientation computation convention used by the mechanical team
+- Decide whether to remain polling-only or later use `INT2` for data-ready or motion event assistance

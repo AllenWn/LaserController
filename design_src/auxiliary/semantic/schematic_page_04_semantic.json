@@ -1,0 +1,69 @@
+{
+  "page_number": 4,
+  "page_title": "LEDs",
+  "modules": [
+    {
+      "ref": "U1",
+      "value": "TLC59116IRHBR",
+      "role": "16-channel I2C LED current sink driver",
+      "pins": [
+        { "pin_number": "27", "pin_name": "VCC", "net": "VDD_3V3" },
+        { "pin_number": "26", "pin_name": "SDA", "net": "I2C_SDA" },
+        { "pin_number": "25", "pin_name": "SCL", "net": "I2C_SCL" },
+        { "pin_number": "31", "pin_name": "A0", "net": "GND" },
+        { "pin_number": "32", "pin_name": "A1", "net": "GND" },
+        { "pin_number": "1", "pin_name": "A2", "net": "GND" },
+        { "pin_number": "2", "pin_name": "A3", "net": "GND" },
+        { "pin_number": "30", "pin_name": "REXT", "net": "REXT_SET" },
+        { "pin_number": "33", "pin_name": "EP", "net": "GND" },
+        { "pin_number": "7", "pin_name": "GND", "net": "GND" },
+        { "pin_number": "18", "pin_name": "GND", "net": "GND" },
+        { "pin_number": "23", "pin_name": "GND", "net": "GND" },
+        { "pin_number": "3", "pin_name": "OUT0", "net": "RGB_B" },
+        { "pin_number": "4", "pin_name": "OUT1", "net": "RGB_R" },
+        { "pin_number": "5", "pin_name": "OUT2", "net": "RGB_G" },
+        { "pin_number": "6", "pin_name": "OUT3", "net": "RED_LED_0" },
+        { "pin_number": "8", "pin_name": "OUT4", "net": "RED_LED_1" },
+        { "pin_number": "9", "pin_name": "OUT5", "net": "RED_LED_2" },
+        { "pin_number": "10", "pin_name": "OUT6", "net": "RED_LED_3" },
+        { "pin_number": "11", "pin_name": "OUT7", "net": "RED_LED_4" }
+      ]
+    },
+    {
+      "ref": "U3",
+      "value": "MP3414AGJ-Z",
+      "role": "Boost converter generating 5V LED rail",
+      "pins": [
+        { "pin_number": "1", "pin_name": "IN", "net": "VDD_3V3" },
+        { "pin_number": "2", "pin_name": "OUT", "net": "VDD_5V0" },
+        { "pin_number": "3", "pin_name": "SW", "net": "SW" },
+        { "pin_number": "4", "pin_name": "PGND", "net": "GND" },
+        { "pin_number": "8", "pin_name": "EN", "net": "VDD_3V3" },
+        { "pin_number": "7", "pin_name": "FB", "net": "FB" },
+        { "pin_number": "6", "pin_name": "AGND", "net": "GND" },
+        { "pin_number": "5", "pin_name": "FTY", "net": "GND" }
+      ]
+    }
+  ],
+  "passive_components": [
+    { "ref": "R5", "value": "2k", "net": "REXT_SET", "to": "GND" },
+    { "ref": "R6", "value": "604k", "net": "FB" },
+    { "ref": "R7", "value": "191k", "net": "FB" },
+    { "ref": "C1", "value": "10uF", "nets": ["VDD_3V3", "GND"] },
+    { "ref": "C2", "value": "22uF", "nets": ["VDD_5V0", "GND"] },
+    { "ref": "L1", "value": "PIFE322512-1R5M-R", "nets": ["SW", "VDD_3V3"] }
+  ],
+  "indicators": [
+    { "ref": "D7", "value": "WL-SFTW_5050_PLCC6", "kind": "RGB LED", "anode_rail": "VDD_5V0" },
+    { "ref": "D8", "value": "WL-SMCW_1206", "kind": "Red LED", "anode_rail": "VDD_5V0" },
+    { "ref": "D9", "value": "WL-SMCW_1206", "kind": "Red LED", "anode_rail": "VDD_5V0" },
+    { "ref": "D10", "value": "WL-SMCW_1206", "kind": "Red LED", "anode_rail": "VDD_5V0" },
+    { "ref": "D11", "value": "WL-SMCW_1206", "kind": "Red LED", "anode_rail": "VDD_5V0" },
+    { "ref": "D12", "value": "WL-SMCW_1206", "kind": "Red LED", "anode_rail": "VDD_5V0" }
+  ],
+  "notes_from_sheet": [
+    "LED drive uses an I2C current-sink driver with all address straps low.",
+    "A local boost converter generates a 5V rail for the LED anodes from the board 3.3V input.",
+    "Only OUT0 through OUT7 are visibly used on this sheet; higher-numbered outputs are left unused."
+  ]
+}
