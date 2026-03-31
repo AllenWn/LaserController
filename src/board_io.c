@@ -6,6 +6,31 @@
 #include "esp_log.h"
 
 static const char *TAG = "board_io";
+static bool s_last_out_valid;
+static bool s_last_tec_en;
+static bool s_last_ld_en;
+static ld_mode_t s_last_ld_mode;
+static bool s_last_permit;
+static bool s_last_fault;
+
+static void log_outputs_if_changed(bool tec_en, bool ld_en, ld_mode_t ld_mode, bool permit, bool fault_present)
+{
+  if (s_last_out_valid && s_last_tec_en == tec_en && s_last_ld_en == ld_en && s_last_ld_mode == ld_mode &&
+      s_last_permit == permit && s_last_fault == fault_present)
+  {
+    return;
+  }
+
+  ESP_LOGI(TAG, "outputs tec_en=%d ld_en=%d ld_mode=%d permit=%d fault=%d", tec_en ? 1 : 0, ld_en ? 1 : 0,
+           (int)ld_mode, permit ? 1 : 0, fault_present ? 1 : 0);
+
+  s_last_out_valid = true;
+  s_last_tec_en = tec_en;
+  s_last_ld_en = ld_en;
+  s_last_ld_mode = ld_mode;
+  s_last_permit = permit;
+  s_last_fault = fault_present;
+}
 
 static void gpio_write(gpio_num_t gpio, bool high)
 {
@@ -81,6 +106,7 @@ esp_err_t board_io_init(void)
   set_ld_sbdn_shutdown();
   // LISL is hard-tied to GND on this design; always select the high port (LISH).
   set_ld_pcn_high();
+  log_outputs_if_changed(false, false, LD_MODE_SHUTDOWN, false, false);
 
   ESP_LOGI(TAG, "IO initialized (fail-safe outputs set)");
   return ESP_OK;
@@ -100,6 +126,7 @@ esp_err_t board_io_apply_fsm_outputs(const fsm_outputs_t *out, bool permit, bool
     set_pwr_ld_en(false);
     set_ld_sbdn_shutdown();
     set_ld_pcn_high();
+    log_outputs_if_changed(false, false, LD_MODE_SHUTDOWN, permit, fault_present);
     return ESP_OK;
   }
 
@@ -115,6 +142,7 @@ esp_err_t board_io_apply_fsm_outputs(const fsm_outputs_t *out, bool permit, bool
   if (!permit)
   {
     set_ld_sbdn_shutdown();
+    log_outputs_if_changed(out->enable_tec_power, out->enable_ld_power, LD_MODE_SHUTDOWN, permit, fault_present);
     return ESP_OK;
   }
 
@@ -122,5 +150,6 @@ esp_err_t board_io_apply_fsm_outputs(const fsm_outputs_t *out, bool permit, bool
   // If the FSM requests emission, force OPERATE regardless of configured READY mode.
   const ld_mode_t mode = out->want_emission ? LD_MODE_OPERATE : out->ld_mode;
   apply_ld_mode(mode);
+  log_outputs_if_changed(out->enable_tec_power, out->enable_ld_power, mode, permit, fault_present);
   return ESP_OK;
 }

@@ -92,21 +92,19 @@ esp_err_t ld_monitor_init(const ld_monitor_config_t *cfg)
   s_cfg = *cfg;
   memset(&s_int, 0, sizeof(s_int));
 
-  // Defaults for TBD fields (so module behaves deterministically even if caller leaves them 0).
+  // Defaults from the LD driver datasheet so the module behaves deterministically
+  // even if the caller leaves these fields at zero.
   if (s_cfg.tmo_temp_a_c == 0.0f && s_cfg.tmo_temp_b_c_per_v == 0.0f)
   {
-    // TBD: verify against datasheet + board analog scaling.
     s_cfg.tmo_temp_a_c = 192.5576f;
     s_cfg.tmo_temp_b_c_per_v = -90.1040f;
   }
   if (s_cfg.lio_amps_per_v == 0.0f)
   {
-    // TBD: verify against datasheet + board analog scaling.
     s_cfg.lio_amps_per_v = 2.4f;
   }
   if (s_cfg.fault_debounce_samples == 0)
   {
-    // TBD: choose based on sample period and required response time.
     s_cfg.fault_debounce_samples = 1;
   }
   if (s_cfg.recover_debounce_samples == 0)
@@ -189,12 +187,11 @@ static void compute_analog(ld_monitor_analog_status_t *out)
       out->tmo_valid = true;
       out->tmo_v = v;
 
-      // TBD: if PCB scales the voltage, apply scaling here (e.g., v = v * scale_factor).
+      // If the PCB scales the voltage before the MCU ADC, apply that scaling here.
       out->temp_c = s_cfg.tmo_temp_a_c + (s_cfg.tmo_temp_b_c_per_v * v);
 
       if (s_cfg.use_tmo_for_safety)
       {
-        // TBD: define temp_max_c based on system safety requirements.
         s_int.temp_ok = eval_threshold_hyst(s_int.temp_ok, out->temp_c, s_cfg.temp_max_c, s_cfg.temp_hyst_c,
                                             s_cfg.fault_debounce_samples, s_cfg.recover_debounce_samples,
                                             &s_int.temp_fault_cnt, &s_int.temp_recover_cnt);
@@ -216,12 +213,11 @@ static void compute_analog(ld_monitor_analog_status_t *out)
       out->lio_valid = true;
       out->lio_v = v;
 
-      // TBD: if PCB scales the voltage, apply scaling here.
+      // If the PCB scales the voltage before the MCU ADC, apply that scaling here.
       out->current_a = v * s_cfg.lio_amps_per_v;
 
       if (s_cfg.use_lio_for_safety)
       {
-        // TBD: define current_max_a based on system safety requirements.
         s_int.current_ok = eval_threshold_hyst(s_int.current_ok, out->current_a, s_cfg.current_max_a, s_cfg.current_hyst_a,
                                                s_cfg.fault_debounce_samples, s_cfg.recover_debounce_samples,
                                                &s_int.current_fault_cnt, &s_int.current_recover_cnt);

@@ -103,17 +103,35 @@ static bool compute_permit(uint32_t safety_bits)
 static bool has_internal_fault(uint32_t fault_latch) { return (fault_latch & FAULT_MASK_INTERNAL) != 0u; }
 static bool has_usage_fault(uint32_t fault_latch) { return (fault_latch & FAULT_MASK_USAGE) != 0u; }
 
+static void log_supervisor_snapshot(const char *reason, system_state_t st, const fsm_inputs_t *in, const fsm_outputs_t *out,
+                                    uint32_t safety_bits, uint32_t fault_latch, const system_status_snapshot_t *snap,
+                                    bool internal_fault_present, bool usage_block, bool permit)
+{
+  ESP_LOGI(TAG,
+           "%s st=%d trg=%d permit=%d bits=0x%08X faults=0x%08X int=%d use=%d "
+           "in{tec=%d ld=%d} out{tec=%d ld=%d ld_mode=%d emit=%d clamp=%d} imu{ok=%d ang=%.1f}",
+           reason, (int)st, in->trigger ? 1 : 0, permit ? 1 : 0, (unsigned)safety_bits, (unsigned)fault_latch,
+           internal_fault_present ? 1 : 0, usage_block ? 1 : 0, in->pwr_tec_ready ? 1 : 0, in->pwr_ld_ready ? 1 : 0,
+           out->enable_tec_power ? 1 : 0, out->enable_ld_power ? 1 : 0, (int)out->ld_mode, out->want_emission ? 1 : 0,
+           out->clamp_setpoints ? 1 : 0, snap->imu.orientation_ok ? 1 : 0, (double)snap->imu.angle_from_down_deg);
+}
+
 static void supervisor_task(void *arg)
 {
   (void)arg;
   TickType_t last_wake = xTaskGetTickCount();
-  TickType_t last_log = last_wake;
   system_state_t last_state = fsm_get_state();
   TickType_t state_enter_tick = last_wake;
   uint8_t trigger_release_cnt = 0;
   bool last_clamp = true;
   uint16_t last_ld_code = 0xFFFF;
   uint16_t last_tec_code = 0xFFFF;
+  bool last_trigger = false;
+  bool last_permit = false;
+  uint32_t last_safety_bits = UINT32_MAX;
+  uint32_t last_fault_latch = UINT32_MAX;
+  bool last_internal_fault = false;
+  bool last_usage_block = false;
 
   for (;;)
   {
@@ -252,13 +270,15 @@ static void supervisor_task(void *arg)
       ld_code = DAC_LD_CODE_FIRING_TBD;
     }
 
-    const bool changed = (clamp != last_clamp) || (ld_code != last_ld_code) || (tec_code != last_tec_code);
+    const bool clamp_effective = clamp;
+
+    const bool changed = (clamp_effective != last_clamp) || (ld_code != last_ld_code) || (tec_code != last_tec_code);
     if (changed)
     {
-      dac_control_set_clamp(clamp);
+      dac_control_set_clamp(clamp_effective);
       dac_control_set_targets(ld_code, tec_code);
       dac_task_notify_update();
-      last_clamp = clamp;
+      last_clamp = clamp_effective;
       last_ld_code = ld_code;
       last_tec_code = tec_code;
     }
@@ -266,23 +286,26 @@ static void supervisor_task(void *arg)
     const system_state_t st = out.state;
     if (st != last_state)
     {
-      ESP_LOGI(TAG, "State %d -> %d (permit=%d bits=0x%08X faults=0x%08X)", (int)last_state, (int)st, permit ? 1 : 0,
-               (unsigned)safety_bits, (unsigned)fault_latch);
+      ESP_LOGI(TAG, "State %d -> %d", (int)last_state, (int)st);
+      log_supervisor_snapshot("state", st, &in, &out, safety_bits, fault_latch, &snap, internal_fault_present,
+                              usage_block, permit);
       last_state = st;
       state_enter_tick = now;
     }
 
-    if ((now - last_log) >= pdMS_TO_TICKS(STATUS_LOG_PERIOD_MS))
+    const bool snapshot_changed = (trigger != last_trigger) || (permit != last_permit) || (safety_bits != last_safety_bits) ||
+                                  (fault_latch != last_fault_latch) || (internal_fault_present != last_internal_fault) ||
+                                  (usage_block != last_usage_block);
+    if (snapshot_changed)
     {
-      last_log = now;
-      ESP_LOGI(TAG,
-               "st=%d trg=%d permit=%d bits=0x%08X faults=0x%08X int=%d use=%d out{tec=%d ld=%d ld_mode=%d emit=%d "
-               "clamp=%d} imu{ok=%d ang=%.1f}",
-               (int)st, in.trigger ? 1 : 0, permit ? 1 : 0, (unsigned)safety_bits,
-               (unsigned)fault_latch, internal_fault_present ? 1 : 0, usage_block ? 1 : 0, out.enable_tec_power ? 1 : 0,
-               out.enable_ld_power ? 1 : 0, (int)out.ld_mode, out.want_emission ? 1 : 0,
-               out.clamp_setpoints ? 1 : 0, snap.imu.orientation_ok ? 1 : 0,
-               (double)snap.imu.angle_from_down_deg);
+      log_supervisor_snapshot("snap", st, &in, &out, safety_bits, fault_latch, &snap, internal_fault_present,
+                              usage_block, permit);
+      last_trigger = trigger;
+      last_permit = permit;
+      last_safety_bits = safety_bits;
+      last_fault_latch = fault_latch;
+      last_internal_fault = internal_fault_present;
+      last_usage_block = usage_block;
     }
   }
 }

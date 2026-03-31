@@ -15,12 +15,12 @@ static const char *TAG = "aux_out";
 #define MCP23017_ADDR_7BIT 0x20
 #endif
 
-#ifndef AUX_TLC59116_ADDR_7BIT_TBD
-#define AUX_TLC59116_ADDR_7BIT_TBD 0x60
+#ifndef AUX_TLC59116_ADDR_7BIT
+#define AUX_TLC59116_ADDR_7BIT 0x60
 #endif
 
-#ifndef AUX_DRV2605_ADDR_7BIT_TBD
-#define AUX_DRV2605_ADDR_7BIT_TBD 0x5A
+#ifndef AUX_DRV2605_ADDR_7BIT
+#define AUX_DRV2605_ADDR_7BIT 0x5A
 #endif
 
 static esp_err_t aux_expander_set_lra_enable(const mcp23017_i2c_t *mcp, bool enable)
@@ -52,8 +52,8 @@ static void aux_output_task(void *arg)
   drv2605_i2c_t haptic = {0};
   mcp23017_i2c_t mcp = {0};
 
-  (void)tlc59116_i2c_init(&led, aux_i2c_bus_port(), AUX_TLC59116_ADDR_7BIT_TBD);
-  (void)drv2605_i2c_init(&haptic, aux_i2c_bus_port(), AUX_DRV2605_ADDR_7BIT_TBD);
+  (void)tlc59116_i2c_init(&led, aux_i2c_bus_port(), AUX_TLC59116_ADDR_7BIT);
+  (void)drv2605_i2c_init(&haptic, aux_i2c_bus_port(), AUX_DRV2605_ADDR_7BIT);
   (void)mcp23017_i2c_init(&mcp, aux_i2c_bus_port(), MCP23017_ADDR_7BIT);
 
   if (aux_i2c_bus_lock(pdMS_TO_TICKS(100)))

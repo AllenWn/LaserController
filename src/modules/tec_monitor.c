@@ -92,10 +92,10 @@ esp_err_t tec_monitor_init(const tec_monitor_config_t *cfg)
   s_cfg = *cfg;
   memset(&s_int, 0, sizeof(s_int));
 
-  // Defaults for TBD fields.
+  // Defaults for known datasheet values and safe deterministic behavior.
   if (s_cfg.fault_debounce_samples == 0)
   {
-    s_cfg.fault_debounce_samples = 1; // TBD choose for your response-time target
+    s_cfg.fault_debounce_samples = 1;
   }
   if (s_cfg.recover_debounce_samples == 0)
   {
@@ -116,7 +116,6 @@ esp_err_t tec_monitor_init(const tec_monitor_config_t *cfg)
 
   if (s_cfg.itec_v_offset_v == 0.0f && s_cfg.itec_v_per_a == 0.0f)
   {
-    // TBD verify against datasheet + board scaling.
     s_cfg.itec_v_offset_v = 1.25f;
     s_cfg.itec_v_per_a = 0.285f;
   }
@@ -187,7 +186,8 @@ static void compute_analog(tec_monitor_analog_status_t *out)
       out->tmo_valid = true;
       out->tmo_v = v;
 
-      // TBD: apply board scaling; define a/b from real calibration.
+      // Apply board scaling / calibration here once the TMO->temperature mapping
+      // is finalized for this board revision.
       out->temp_c = s_cfg.tmo_temp_a_c + (s_cfg.tmo_temp_b_c_per_v * v);
 
       if (s_cfg.use_tmo_for_safety)
@@ -212,7 +212,7 @@ static void compute_analog(tec_monitor_analog_status_t *out)
       out->itec_v = v;
 
       // Datasheet: ITEC = (V_ITEC - 1.25) / 0.285
-      // TBD: apply board scaling if needed.
+      // Apply board scaling here if the PCB changes the monitor voltage before ADC.
       out->itec_a = (v - s_cfg.itec_v_offset_v) / s_cfg.itec_v_per_a;
 
       if (s_cfg.use_itec_for_safety)
@@ -236,7 +236,7 @@ static void compute_analog(tec_monitor_analog_status_t *out)
       out->vtec_valid = true;
       out->vtec_v_pin = v;
 
-      // TBD: apply board scaling.
+      // Apply board scaling here once the VTEC path is finalized for this board revision.
       out->vtec_v = v * s_cfg.vtec_scale;
 
       if (s_cfg.use_vtec_for_safety)
@@ -304,4 +304,3 @@ esp_err_t tec_monitor_sample(tec_monitor_digital_status_t *dig, tec_monitor_anal
   *out_ok = ok;
   return ESP_OK;
 }
-

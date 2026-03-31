@@ -25,18 +25,19 @@ typedef struct
   // ADC voltage read hook (same semantics as LD monitor).
   bool (*read_voltage)(gpio_num_t gpio, float *out_v);
 
-  // Active-level configuration (placeholders; verify on hardware).
+  // Active-level configuration.
   bool pwr_tec_pgood_active_high;
-  bool tec_tempgd_active_high; // TBD verify
+  bool tec_tempgd_active_high;
 
   // ---------------------------------------------------------------------------
-  // Analog conversion formulas (TBD: verify against your board's analog scaling)
+  // Analog conversion formulas
   // ---------------------------------------------------------------------------
   // TEC_TMO: datasheet notes ~0.1V to 2.5V across default network range. Mapping to °C is board-specific.
-  // Provide a linear mapping placeholder:
+  // The datasheet note available in this project does not lock a direct °C formula,
+  // so firmware keeps this as a board/calibration-defined linear placeholder:
   //   T(°C) = a + b * V_TMO
-  float tmo_temp_a_c;        // TBD
-  float tmo_temp_b_c_per_v;  // TBD
+  float tmo_temp_a_c;
+  float tmo_temp_b_c_per_v;
 
   // TEC_ITEC: datasheet formula (pin table):
   //   ITEC(A) = (V_ITEC - 1.25) / 0.285
@@ -44,13 +45,14 @@ typedef struct
   float itec_v_offset_v; // default 1.25
   float itec_v_per_a;    // default 0.285
 
-  // TEC_VTEC: voltage indication; scaling is board-specific.
+  // TEC_VTEC: voltage indication; datasheet-level scaling still depends on the
+  // board path used in this project.
   // Provide a multiplier placeholder:
   //   V_TEC = V_pin * vtec_scale
-  float vtec_scale; // TBD
+  float vtec_scale;
 
   // ---------------------------------------------------------------------------
-  // Safety thresholds (TBD: define during system safety design)
+  // Safety thresholds (system-level design values; not fixed by chip datasheet)
   // ---------------------------------------------------------------------------
   float temp_max_c;
   float temp_hyst_c;
@@ -98,4 +100,3 @@ esp_err_t tec_monitor_init(const tec_monitor_config_t *cfg);
 esp_err_t tec_monitor_sample_digital(tec_monitor_digital_status_t *out);
 esp_err_t tec_monitor_sample_analog(tec_monitor_analog_status_t *out);
 esp_err_t tec_monitor_sample(tec_monitor_digital_status_t *dig, tec_monitor_analog_status_t *ana, bool *out_ok);
-

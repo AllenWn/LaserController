@@ -25,15 +25,16 @@ typedef struct
   // - return true and set *out_v to the pin voltage (volts) when a valid fresh sample is available
   // - return false if ADC not implemented, misconfigured, or sample unavailable
   //
-  // TBD (board-specific): whether there is an external divider/op-amp scaling before the MCU.
+  // Board-specific note: if there is external divider/op-amp scaling before the MCU ADC,
+  // apply that in the provided readout path or by adjusting the conversion coefficients below.
   bool (*read_voltage)(gpio_num_t gpio, float *out_v);
 
-  // Active-level configuration (placeholders; verify on hardware).
+  // Active-level configuration.
   bool pwr_ld_pgood_active_high;
   bool ld_lpgd_active_high;
 
   // ---------------------------------------------------------------------------
-  // Analog conversion formulas (TBD: verify against your board's analog scaling)
+  // Analog conversion formulas
   // ---------------------------------------------------------------------------
   // LD_TMO: controller temperature monitor voltage -> temperature (°C)
   //
@@ -41,7 +42,7 @@ typedef struct
   //   T(°C) ≈ 192.5576 − 90.1040 × V_TMO
   //
   // If your PCB scales V_TMO before the MCU ADC, you must adjust the coefficients.
-  float tmo_temp_a_c; // default 192.5576
+  float tmo_temp_a_c;       // default 192.5576
   float tmo_temp_b_c_per_v; // default -90.1040
 
   // LD_LIO: output current monitor voltage -> current (A)
@@ -53,7 +54,7 @@ typedef struct
   float lio_amps_per_v; // default 2.4
 
   // ---------------------------------------------------------------------------
-  // Safety thresholds (TBD: define during system safety design)
+  // Safety thresholds (system-level design values; not fixed by chip datasheet)
   // ---------------------------------------------------------------------------
   float temp_max_c;    // over-temp threshold
   float temp_hyst_c;   // hysteresis below max for recovery

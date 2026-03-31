@@ -5,7 +5,7 @@
 
 // Task periods
 #ifndef SUPERVISOR_TASK_PERIOD_MS
-#define SUPERVISOR_TASK_PERIOD_MS 5
+#define SUPERVISOR_TASK_PERIOD_MS 10
 #endif
 
 #ifndef STATUS_LOG_PERIOD_MS
@@ -28,4 +28,3 @@
 #ifndef IMU_STATUS_TIMEOUT_MS
 #define IMU_STATUS_TIMEOUT_MS 100
 #endif
-
