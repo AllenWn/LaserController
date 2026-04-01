@@ -1,0 +1,48 @@
+Digital Supply to TEC
+Vin = 9-20V; Vout = 5.0V @ 3A
+
+Controller
+
+GND
+—- VDS_TEC_5V0
+R12
+1M U2A VIN. MPM3 VDD U2B
+1 of 2 2 of 2
+PWR_TEC EN 40 29
+P32_S3_Module[2B]|_PWR_TEC EN > IPM 3 FB 37 EN VDD
+G25 R13 3 a VIN
+AGND=21l| ——]—+_ >, GH Bst <2 VIN
+2k53 (1) COMP VIN
+2.2nF (COG) pay 39 | FREQ | is,
+AGND-2\||_——_- > ] m1 33
+102k (1%) 337] PG 34_| AGND
+R15 —| ss 35] AGND
+MPM_3_VDD| {_} ? AGND
+100k 9
+PGND
+PWR TEC GOOD END)
+ESP32_S3 Module[2B] A PGND
+sw F3 PGND
+sw +3 PGND
+SW PGND
+pf sw Fy PGND
+on sW 5 PGND
+s SW 5 PGND
+& SW Ty PGND
+Sw PGND
+OR
+MPM3530GRF — == ———- MPM3530GRF
+VDS_TEC_5V0 |! AGND-2 = :
+TOKO (1%)  2k5 (1%) | GND 2 GND
+Power Bypass Network
+VIN VDS_TEC_5V0
+6 28
+S0.1uF_35V
+GND
+Title
+Size Number Revision
+A
+Date: 3/31/2026 Sheet_of
+File: Digital Supply _TEC-Driver.SchDoc Drawn By:
+1 2 3 4
+

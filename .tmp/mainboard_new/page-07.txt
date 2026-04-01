@@ -1,0 +1,39 @@
+TEC Controller
+
+VDS_TEC_5V0
+
+ESP32_S3_Module[1C]
+ESP32_S3_Module[1C]
+
+TP5
+
+TECP
+
+TEC_2V5_REF|
+
+TEC14MSV3R5AS
+
+Digital_Supply
+
+— L_| B
+TEC+
+TECEIEMEGD { TEC_TEMPGD >ESP32_S3_Module[3B] "|
+TEC-
+Temp Good Indicator
+w,
+R37 7 c
+TEC_TEMPGD — 2 | 1 {| cp
+APT1608ZGCK
+Power Bypass Network
+TEC_2V5_REF VDS_TEC_5V0
+65 5 5 5 4 43
+0.1uF 10uF{ 22uF] 22uF] 1uF | 0.1uF
+GND GND
+Title D
+Size Number Revision
+A
+Date: 3/31/2026 Sheet_of
+File: TEC_Controller.SchDoc Drawn By:
+
+3 4
+

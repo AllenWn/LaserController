@@ -15,3 +15,5 @@ esp_err_t stusb4500_i2c_init(stusb4500_i2c_t *dev, i2c_port_t port, uint8_t addr
 esp_err_t stusb4500_i2c_probe(const stusb4500_i2c_t *dev);
 esp_err_t stusb4500_i2c_read_reg8(const stusb4500_i2c_t *dev, uint8_t reg, uint8_t *value);
 esp_err_t stusb4500_i2c_write_reg8(const stusb4500_i2c_t *dev, uint8_t reg, uint8_t value);
+esp_err_t stusb4500_i2c_read_block(const stusb4500_i2c_t *dev, uint8_t reg, uint8_t *buf, size_t len);
+esp_err_t stusb4500_i2c_write_block(const stusb4500_i2c_t *dev, uint8_t reg, const uint8_t *buf, size_t len);

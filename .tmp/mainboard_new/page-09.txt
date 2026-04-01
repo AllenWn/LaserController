@@ -1,0 +1,58 @@
+DAC for TEC/LD Settings
+
+12/14/16-bit 2-Channel
+
+DVDD_3V3
+
+ESP32_S3_Module[2D]
+ESP32_S3_Module[2D]
+
+4k7 R46
+4k7 R47
+
+DAC SDA
+DAC SCL
+
+DVDD 3VGND
+
+200R (DNP)
+| pamercmea |
+Ua
+
+DAC _ SCL
+
+DAC SDA
+
+12C Slave Addr:
+
+DVDD 3V3
+
+GND DAC80502DRXR
+
+1001000
+
+DVDD 3V3
+
+1
+
+DAC OUTA
+
+DAC _OUTB
+
+LD_Controller[1B]
+TEC_Controller[1B]
+
+GND
+Power Bypass Network
+DVDD 3V3
+/——_ 54
+0.1uF
+GND
+Title
+Size Number Revision
+A
+Date: 3/31/2026 Sheet _of
+File: DAC.SchDoc Drawn By:
+
+4
+

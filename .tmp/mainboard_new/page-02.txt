@@ -1,0 +1,54 @@
+Digital S t L Cont 1 | Emergency Overtemp Shutdown
+Igita upply tO Laser vLonTtrorler a
+. : U10
+Vin = 9~20V; Vout = 8V @ 3A BSP32_83 Module] TEC_Controller{4B] a RVASTINGICR!
+: 4
+R59 A
+DVDD_3V3 ea Digital_Supply_LD-Driver[1B]
+DNP a
+R6O
+DNP
+GND
+= VDS_LD 8v0 IL,
+GND GND
+4A]|_LD_OT_SHDN> fi
+seihesl 1M USA VIN MPM 2 VDD USB
+R58 1 of 2 2 of 2
+Modble(2B][_PWR LD EN > 37°] EN 2 vpp
+10K FB ,
+B R6 VIN
+AGN «|| ——— a Bsr | VIN
+o.onF (co) 2883 (#9 557] COMP ar VIN
+; R7 FREQ VIN
+AGND +||-— {1 31 3
+178k (1%) 3] PG 34>] AGND
+R8 +H ss 53-] AGND
+MPM_2_VDD} =o) ? AGND
+100k
+PGND
+ESP32_S3_ Module{2B]< PWR LD PGOOD_}2WR LD PGOOD _| PGND
+A PGND
+SW F5 PGND
+fa sw Fs PGND
+5 sw } PGND
+s SW Fg PGND
+& SW bg PGND
+sw 5 PGND
+sw fy PGND
+Cc sw PGND
+VDS_LD_8V0 |: AGND
+GES hg) Tels (i. MPM3530GRF ==0R == — MPMG530GRF
+AGND GND
+Power Bypass Network
+VIN VDS_LD 8v0
+1 1 iy _ 1 17 1 2 a) 1 23
+10uF| 10uF] 10uF] 10uF] 1uF_45W.1uF 35V 22uF] 22uF] 22uF] 22uF| 1uF | 0.1uF
+GND GND
+Title
+Size Number Revision
+A
+Date: 3/31/2026 Sheet _of
+File: Digital Supply LD-Driver.SchDoc Drawn By:
+
+4
+

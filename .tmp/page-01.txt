@@ -1,0 +1,37 @@
+Digital
+
+Supply to MCU
+
+& Peripherals
+
+DVDD 3V3
+MPM_1 3V3 VIN
+Rt
+R2 976k (0.1%)  SmECt
+100k 22pF
+D3
+| 1 | 12 R43
+GND II <I ——_}— MPM_1_3V3 pop,
+“/ 1k 220k (0.1%)
+APT1608ZGCK
+GND
+
+Power Bypass Network
+
+VIN
+2 3 4 5 6
+10uF] 10uF] 10uF[ 10uF] 1ur_35V
+
+GND
+
+DVDD _3V3
+
+GND
+Title
+Size Number Revision
+A
+Date: 3/31/2026 Sheet _of
+File: Digital Supply MCU.SchDoc Drawn By:
+
+4
+

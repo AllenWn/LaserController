@@ -13,8 +13,20 @@
     { "gpio": 8, "net": "TEC_TMO", "sheet_refs": ["TEC_Controller"] },
     { "gpio": 9, "net": "TEC_ITEC", "sheet_refs": ["TEC_Controller"] },
     { "gpio": 10, "net": "TEC_VTEC", "sheet_refs": ["TEC_Controller"] },
-    { "gpio": 11, "net": "DAC_SDA", "sheet_refs": ["DAC"] },
-    { "gpio": 12, "net": "DAC_SCL", "sheet_refs": ["DAC"] },
+    {
+      "gpio": 4,
+      "net": "DAC_SDA",
+      "sheet_refs": ["DAC"],
+      "routing_status": "shared_i2c_selected",
+      "routing_note": "Current selected MainBoard stuffing option routes DAC I2C onto the shared STUSB4500/ERM bus."
+    },
+    {
+      "gpio": 5,
+      "net": "DAC_SCL",
+      "sheet_refs": ["DAC"],
+      "routing_status": "shared_i2c_selected",
+      "routing_note": "Current selected MainBoard stuffing option routes DAC I2C onto the shared STUSB4500/ERM bus."
+    },
     { "gpio": 13, "net": "LD_SBDN", "sheet_refs": ["LD_Controller"] },
     { "gpio": 14, "net": "LD_LPGD", "sheet_refs": ["LD_Controller"] },
     { "gpio": 15, "net": "PWR_TEC_EN", "sheet_refs": ["Digital_Supply_TEC-Driver"] },
@@ -22,8 +34,20 @@
     { "gpio": 17, "net": "PWR_LD_EN", "sheet_refs": ["Digital_Supply_LD-Driver"] },
     { "gpio": 18, "net": "PWR_LD_PGOOD", "sheet_refs": ["Digital_Supply_LD-Driver"] },
     { "gpio": 21, "net": "LD-PCN", "sheet_refs": ["LD_Controller"] },
-    { "gpio": 35, "net": "ERM_SDA", "sheet_refs": ["Motor_Driver"] },
-    { "gpio": 36, "net": "ERM_SCL", "sheet_refs": ["Motor_Driver"] },
+    {
+      "gpio": 4,
+      "net": "ERM_SDA",
+      "sheet_refs": ["Motor_Driver"],
+      "routing_status": "shared_i2c_selected",
+      "routing_note": "Current selected MainBoard stuffing option routes MainBoard ERM I2C onto the shared STUSB4500/DAC bus."
+    },
+    {
+      "gpio": 5,
+      "net": "ERM_SCL",
+      "sheet_refs": ["Motor_Driver"],
+      "routing_status": "shared_i2c_selected",
+      "routing_note": "Current selected MainBoard stuffing option routes MainBoard ERM I2C onto the shared STUSB4500/DAC bus."
+    },
     {
       "gpio": 37,
       "net": "ERM_TRIG",

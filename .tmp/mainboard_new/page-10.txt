@@ -1,0 +1,44 @@
+Haptic Motor Driver
+
+DVDD 3V3
+
+4k7 R48
+4k7 R49
+
+ERM_SDA
+ERM_SCL
+
+ESP32_S3_Module[3C — —
+ESP32_S3_Module[3B]
+
+ESP32_$3_ Module{1D] wt
+ESP32_S3_Module{1D]
+
+12C Slave Addr: 1011010
+
+DVDD 3V3
+U8
+vpp -& i zx
+Al A3 M1
+EN OUT+ rs . r
+‘Bi IN/TRIG OUT. C3 HD-EMC1004-SC
+Geb SCL REG 2 ;
+25] SDA
+O=m==C6 1 z
+GND B3 0.1uF
+DRV2605YZFR
+GND
+Power Bypass Network
+DVDD 3V3
+5 —— Hohe)
+0.1uF
+GND
+Title
+Size Number Revision
+A
+
+Date: 3/31/2026 Sheet _of
+File: Motor _Driver.SchDoc Drawn By:
+
+4
+

@@ -139,21 +139,25 @@
       "locked_for_firmware": true
     },
     {
-      "gpio": 11,
+      "gpio": 4,
       "net": "DAC_SDA",
       "direction": "bidirectional",
       "kind": "i2c",
       "endpoint": "DAC80502 SDA",
       "system_role": "analog_setpoint_control",
+      "shared_bus_with": ["STUSB4500", "MainBoard DRV2605"],
+      "active_design_variant": "shared_i2c_selected",
       "locked_for_firmware": true
     },
     {
-      "gpio": 12,
+      "gpio": 5,
       "net": "DAC_SCL",
       "direction": "output/bidirectional_bus_clock",
       "kind": "i2c",
       "endpoint": "DAC80502 SCL",
       "system_role": "analog_setpoint_control",
+      "shared_bus_with": ["STUSB4500", "MainBoard DRV2605"],
+      "active_design_variant": "shared_i2c_selected",
       "locked_for_firmware": true
     },
     {
@@ -197,21 +201,25 @@
       "locked_for_firmware": true
     },
     {
-      "gpio": 35,
+      "gpio": 4,
       "net": "ERM_SDA",
       "direction": "bidirectional",
       "kind": "i2c",
       "endpoint": "MainBoard DRV2605 SDA",
       "system_role": "ui_haptic_non_safety",
+      "shared_bus_with": ["STUSB4500", "DAC80502"],
+      "active_design_variant": "shared_i2c_selected",
       "locked_for_firmware": true
     },
     {
-      "gpio": 36,
+      "gpio": 5,
       "net": "ERM_SCL",
       "direction": "output/bidirectional_bus_clock",
       "kind": "i2c",
       "endpoint": "MainBoard DRV2605 SCL",
       "system_role": "ui_haptic_non_safety",
+      "shared_bus_with": ["STUSB4500", "DAC80502"],
+      "active_design_variant": "shared_i2c_selected",
       "locked_for_firmware": true
     },
     {
@@ -307,6 +315,12 @@
     }
   ],
   "explicitly_unlocked_or_removed_from_v1": [
+    {
+      "interface": "dac_and_mainboard_erm_fixed_gpio_mapping",
+      "status_in_v1": "treated as fixed DAC on GPIO11/12 and MainBoard ERM on GPIO35/36",
+      "status_in_v2": "updated to shared GPIO4/5 bus",
+      "reason": "Current selected MainBoard stuffing option shares STUSB4500, DAC, and MainBoard ERM on one I2C controller."
+    },
     {
       "interface": "trigger_button_direct_gpio",
       "status_in_v1": "temporary assumption on GPIO4",

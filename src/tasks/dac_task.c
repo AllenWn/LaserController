@@ -7,8 +7,8 @@
 #include "app_config.h"
 #include "control_config.h"
 #include "drivers/dac80502_i2c.h"
-#include "driver/i2c.h"
 #include "modules/dac_control.h"
+#include "modules/pd_i2c_bus.h"
 
 static const char *TAG = "dac_task";
 
@@ -40,26 +40,6 @@ static uint16_t s_last_logged_b;
 static bool s_last_logged_clamp;
 static esp_err_t s_last_logged_err_a = ESP_FAIL;
 static esp_err_t s_last_logged_err_b = ESP_FAIL;
-
-static esp_err_t i2c_master_init_dac_bus(void)
-{
-  const i2c_config_t conf = {
-      .mode = I2C_MODE_MASTER,
-      .sda_io_num = DAC_SDA_GPIO,
-      .scl_io_num = DAC_SCL_GPIO,
-      .sda_pullup_en = GPIO_PULLUP_DISABLE,
-      .scl_pullup_en = GPIO_PULLUP_DISABLE,
-      .master.clk_speed = 400000,
-  };
-
-  esp_err_t err = i2c_param_config(I2C_NUM_0, &conf);
-  if (err != ESP_OK)
-    return err;
-  err = i2c_driver_install(I2C_NUM_0, conf.mode, 0, 0, 0);
-  if (err == ESP_ERR_INVALID_STATE)
-    return ESP_OK;
-  return err;
-}
 
 static esp_err_t dac_write_with_retry(const dac80502_i2c_t *dac, dac80502_reg_t reg, uint16_t value, uint32_t attempts,
                                       uint32_t delay_ms)
@@ -108,6 +88,12 @@ static void dac_apply_once(dac80502_i2c_t *dac, uint16_t *last_a, uint16_t *last
   esp_err_t err_a = ESP_OK;
   esp_err_t err_b = ESP_OK;
 
+  if (!pd_i2c_bus_lock(pdMS_TO_TICKS(50)))
+  {
+    ESP_LOGW(TAG, "shared I2C bus lock timeout during DAC update");
+    return;
+  }
+
   if (a != *last_a)
   {
     err_a = dac80502_i2c_write_reg(dac, DAC80502_REG_DAC_A_DATA, a);
@@ -138,6 +124,8 @@ static void dac_apply_once(dac80502_i2c_t *dac, uint16_t *last_a, uint16_t *last
     s_last_logged_err_a = err_a;
     s_last_logged_err_b = err_b;
   }
+
+  pd_i2c_bus_unlock();
 }
 
 static void dac_task(void *arg)
@@ -153,13 +141,18 @@ static void dac_task(void *arg)
 
   dac_control_init();
 
-  if (i2c_master_init_dac_bus() != ESP_OK)
+  if (!pd_i2c_bus_config_is_valid())
   {
-    ESP_LOGE(TAG, "DAC I2C bus init failed");
+    ESP_LOGE(TAG, "shared I2C bus pins invalid for DAC");
+  }
+
+  if (pd_i2c_bus_init() != ESP_OK)
+  {
+    ESP_LOGE(TAG, "shared I2C bus init failed for DAC");
   }
 
   dac80502_i2c_t dac = {0};
-  (void)dac80502_i2c_init(&dac, I2C_NUM_0, DAC_I2C_ADDR_7BIT);
+  (void)dac80502_i2c_init(&dac, pd_i2c_bus_port(), DAC_I2C_ADDR_7BIT);
 
   // Give the external DAC board a short settle window after reset / bus init
   // before the first write. The DAC EVM consistently responds to the next write
@@ -168,25 +161,43 @@ static void dac_task(void *arg)
 
   // Configure the DAC into a known 0-2.5 V output range before writing channel
   // data so the later code-to-voltage relationship is deterministic.
-  const esp_err_t cfg_wr = dac_write_with_retry(&dac, DAC80502_REG_CONFIG, DAC80502_CONFIG_INIT_VALUE, 5, 50);
+  esp_err_t cfg_wr = ESP_FAIL;
   uint16_t cfg_rb = 0xFFFF;
-  const esp_err_t cfg_rd = dac_read_with_retry(&dac, DAC80502_REG_CONFIG, &cfg_rb, 5, 50);
+  esp_err_t cfg_rd = ESP_FAIL;
+  esp_err_t gain_wr = ESP_FAIL;
+  uint16_t gain_rb = 0xFFFF;
+  esp_err_t gain_rd = ESP_FAIL;
+  esp_err_t init_a = ESP_FAIL;
+  esp_err_t init_b = ESP_FAIL;
+  uint16_t rb_a = 0xFFFF;
+  uint16_t rb_b = 0xFFFF;
+  esp_err_t rd_a = ESP_FAIL;
+  esp_err_t rd_b = ESP_FAIL;
+
+  if (pd_i2c_bus_lock(pdMS_TO_TICKS(200)))
+  {
+    cfg_wr = dac_write_with_retry(&dac, DAC80502_REG_CONFIG, DAC80502_CONFIG_INIT_VALUE, 5, 50);
+    cfg_rd = dac_read_with_retry(&dac, DAC80502_REG_CONFIG, &cfg_rb, 5, 50);
   ESP_LOGI(TAG, "init config=0x%04X write=%s read=%s rb=0x%04X", DAC80502_CONFIG_INIT_VALUE, esp_err_to_name(cfg_wr),
            esp_err_to_name(cfg_rd), cfg_rb);
 
-  const esp_err_t gain_wr = dac_write_with_retry(&dac, DAC80502_REG_GAIN, DAC80502_GAIN_INIT_VALUE, 5, 50);
-  uint16_t gain_rb = 0xFFFF;
-  const esp_err_t gain_rd = dac_read_with_retry(&dac, DAC80502_REG_GAIN, &gain_rb, 5, 50);
+    gain_wr = dac_write_with_retry(&dac, DAC80502_REG_GAIN, DAC80502_GAIN_INIT_VALUE, 5, 50);
+    gain_rd = dac_read_with_retry(&dac, DAC80502_REG_GAIN, &gain_rb, 5, 50);
   ESP_LOGI(TAG, "init gain=0x%04X write=%s read=%s rb=0x%04X", DAC80502_GAIN_INIT_VALUE, esp_err_to_name(gain_wr),
            esp_err_to_name(gain_rd), gain_rb);
 
-  // Force safe defaults at startup.
-  const esp_err_t init_a = dac_write_with_retry(&dac, DAC80502_REG_DAC_A_DATA, DAC_LD_CODE_SAFE_TBD, 5, 50);
-  const esp_err_t init_b = dac_write_with_retry(&dac, DAC80502_REG_DAC_B_DATA, DAC_TEC_CODE_SAFE_TBD, 5, 50);
-  uint16_t rb_a = 0xFFFF;
-  uint16_t rb_b = 0xFFFF;
-  const esp_err_t rd_a = dac_read_with_retry(&dac, DAC80502_REG_DAC_A_DATA, &rb_a, 5, 50);
-  const esp_err_t rd_b = dac_read_with_retry(&dac, DAC80502_REG_DAC_B_DATA, &rb_b, 5, 50);
+    // Force safe defaults at startup.
+    init_a = dac_write_with_retry(&dac, DAC80502_REG_DAC_A_DATA, DAC_LD_CODE_SAFE_TBD, 5, 50);
+    init_b = dac_write_with_retry(&dac, DAC80502_REG_DAC_B_DATA, DAC_TEC_CODE_SAFE_TBD, 5, 50);
+    rd_a = dac_read_with_retry(&dac, DAC80502_REG_DAC_A_DATA, &rb_a, 5, 50);
+    rd_b = dac_read_with_retry(&dac, DAC80502_REG_DAC_B_DATA, &rb_b, 5, 50);
+    pd_i2c_bus_unlock();
+  }
+  else
+  {
+    ESP_LOGW(TAG, "shared I2C bus lock timeout during DAC startup");
+  }
+
   ESP_LOGI(TAG,
            "startup dac_a=0x%04X(%s/%s rb=0x%04X) dac_b=0x%04X(%s/%s rb=0x%04X)",
            DAC_LD_CODE_SAFE_TBD, esp_err_to_name(init_a), esp_err_to_name(rd_a), rb_a, DAC_TEC_CODE_SAFE_TBD,

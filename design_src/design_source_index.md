@@ -17,7 +17,7 @@ The current design assets are organized into four main groups:
 
 File:
 
-- `design_src/schematic/MainBoard_Schematic PDF_[No Variations].pdf`
+- `design_src/schematic/MainBoard_Schematic.pdf`
 
 Role in project:
 
@@ -43,7 +43,7 @@ Current extraction status:
 
 File:
 
-- `design_src/schematic/PD_Schematic PDF_[No Variations].pdf`
+- `design_src/schematic/USB_PD_Schematic.pdf`
 
 Preliminary role assessment:
 
@@ -78,7 +78,7 @@ Current extraction status:
 
 File:
 
-- `design_src/schematic/Auxiliary_Schematic PDF_[No Variations].pdf`
+- `design_src/schematic/Auxiliary_Schematic.pdf`
 
 Preliminary role assessment:
 
@@ -114,7 +114,7 @@ Current extraction status:
 
 File:
 
-- `design_src/schematic/BMS_Schematic PDF_[No Variations].pdf`
+- `design_src/schematic/BMS_Schematic.pdf`
 
 Preliminary role assessment:
 

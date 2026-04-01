@@ -32,10 +32,6 @@
 #define IMU_SDO_GPIO GPIO_NUM_41
 #define IMU_INT2_GPIO GPIO_NUM_42
 
-// DAC I2C
-#define DAC_SDA_GPIO GPIO_NUM_11
-#define DAC_SCL_GPIO GPIO_NUM_12
-
 // USB
 #define USB_DP_GPIO GPIO_NUM_20
 #define USB_DN_GPIO GPIO_NUM_19
@@ -57,6 +53,11 @@
 // PD board supervision path (cross-board through BMS).
 #define PD_ST_SDA_GPIO EXP_IO4_GPIO
 #define PD_ST_SCL_GPIO EXP_IO5_GPIO
+
+// Current stuffed MainBoard design shares the STUSB4500 / DAC / MainBoard ERM
+// I2C bus on GPIO4/GPIO5.
+#define DAC_SDA_GPIO PD_ST_SDA_GPIO
+#define DAC_SCL_GPIO PD_ST_SCL_GPIO
 
 // BMS battery-toggle header path (cross-board through BMS).
 #define BMS_GPIO6_HEADER_GPIO EXP_IO6_GPIO
@@ -82,8 +83,8 @@
 // Shared node on current schematic: ERM_TRIG and GN_LD_EN
 #define ERM_TRIG_GN_LD_EN_GPIO GPIO_NUM_37
 #define ERM_EN_GPIO GPIO_NUM_48
-#define ERM_SDA_GPIO GPIO_NUM_35
-#define ERM_SCL_GPIO GPIO_NUM_36
+#define ERM_SDA_GPIO PD_ST_SDA_GPIO
+#define ERM_SCL_GPIO PD_ST_SCL_GPIO
 
 // Optional system-level signals (mapped to spare pins for now; update during redesign)
 #ifndef LASER_GATE_GPIO

@@ -1,0 +1,61 @@
+RST Button
+
+ESP32 S3 WROOM 1U Core sw
+ESP_ EN A B
+N or H series without PSROM; for higher operating temp iE Te too |
+10k0
+1
+DVDD 3V3 GND
+= 38 GND [2
+1uF EVQ-PLKA08
+DVDD 3V3 — —2
+ICl GND GND
+TP15 ESP_EN 3 2
+EN 3V3
+101s ke PWR TEC EN Digital Supply_TEC-Driver[1B] Power Bypass Network
+5 | PWR TEC EN_Digital_Supply_TEC-Driv
+SEs a 38} RXDO 1016 < PWR TEC GOOD [Digital Supply_TEC-Driver[1B] DAD ENE
+TP14 TXDO 1017 Digital_Supply_LD-Driver[1B]
+1018 Digital_Supply_LD-Driver{1C] Se Oo 34
+ESP D P 14 0.1uF
+5190tr Connectors[2B]<_ ESP USP-DP ESP DN Bo 1020 3 LD-PCN
+Connectors[2B]<_ ESP USP-DN > 1019 1021 38 GPIO3s { LD-PCN _>LD_Controller[1C] —
+TP16 Jose, 22 GPIO36 GND
+ESP GPIOO ESP_GPIOO 21. eo otor Driver{ 1B]
+ESP_GPIO46 16 1 —
+soo jot 1038 fal IMUTIB} BOOT Button (GPI00)
+we 26.) 045 a Sn SWZ
+TP17 esP EN GPIO_45 os ar 4 ZIMU_SDO_[IMU{1B} ESP GPIOO A B
+GPIO 3 103 1042 33 <_IMU_INT2_|IMU[4B] | AT oo BI
+5190tr a R20 1
+LD-TMO _39. 24 10k0 1
+LD _Controller[1B]|_ LD-TMO EOL 1047 TEC_Controller[3B] GND
+LD=€ontroller{1B]|_LD-LIO <T1p-L10 38] 102 1048 ae a ee Gnp |24
+oO 8
+Connectors[1B], Connectgrs[2C]< ESP GPIO4 > ————!.. 104 Gnp GN_LD EN _ > VisibleLaser-Switch[1B] ABILENE) ERED NTS lL
+Connectors[1B], Coagectgrs}2C]< ESP GPIOS > GPIog ee| 105 GND GND
+Connectors[2B], Cofmectgrsy2D]< ESP GPIO6 > “GPIOT 7) 106 GND 7
+Connectors[1B], Connectegg{ID]< ESP GPIO7 > orror 107 GND w/ ESP32 Internal Weak Pull-up
+tal_Supply_LD-Driver[3A], TEC| Cgptroller{4B]|__TEC _TMO 45>] 108 GND
+TEC |Centroller[3B]| TEC ITEC “| 109 GND :
+TEC _Controller/3Bhig —_——8- 1010 GND BOOT Option (GP | 046)
+a) Sa i io12 ND | ESP_GPI046 ial
+troller[4A]< LD SBDN_ } Be 1013 GND {DVDD_3V3
+troller[1C]|__ LD-LPGD Zr} 1014 GND 10k0 (DNP)
+ESP32-S3-WROOM-1U w/ ESP32 Internal Weak Pull-down
+N] A
+ee Boot Modes:
+SPI Boot (Normal): GPIOO -> LOW; GPI046 -> Any
+Joint Download Boot: GPIO0 -> LOW; GPI046 -> LOW
+GPIO4 GPIO4
+aaa ° a ° Keep 103, 1045 OPEN for internal functions
+GPIO36 ¢ GPIO12 + VDD_SPI kept at 3V3 default for internal FLASH
+shatels g lol Le 12C Controller Design Notes:
+EEle 4 EUELE ee - Populate R65, R66 (DAC), R61, R62 (ERM) to share single 12C controller for
+Sysyayre Sysyayve STUSB4500, DAC, and ERM.
+Motor _Driver[1B] a|/46 a/a - Populate R67, R68 (DAC), R63, R64 (ERM) to make STUSB4500, DAC, and ERM
+ERM SDA cc | ce DAC[IB]< DAC SDA a | using separate 12C.
+ERM_SCL S DAC[IB]< DAC SCL Ss
+Motor_Driver{1B] CAVEAT: There are ONLY 2 hardware |2C transcveivers in ESP-S3.
+1 2 3 4
+

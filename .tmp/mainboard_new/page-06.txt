@@ -1,0 +1,52 @@
+ESP32_S3_Module[1B]< LD-TMO _ }
+
+Laser Diode Controller
+
+LD_SBDN
+
+GND |||
+
+DAC[3B]__DAC _OUTA_»>
+ESP32_S3_Module{1C]< LD-LIO |
+
+LD LPGD
+
+ESP32_S3_Module[3B]|_ LD-PCN_»
+
+PCN is used to switch between LISL an
+
+R44
+R980
+
+ESP32_S3_Module[1C]
+
+LD_2V5_VREF
+
+LD Standby Logic
+DVDD 3V3
+A
+o| a
+LD_SBDN = < LD _SBDN_|ESP32_S3_Module[
+218
+VDS_LD_ 8V0 GND
+B
+Loop Good Indicator
+Di
+LA
+R29
+LD LPGD_-—— 2 Se 1 Ison
+ik APT1608ZGCK
+ATLS6A214
+c
+Power Bypass Network
+VDS_LD_8V0
+4 51 5 3 1
+10uF| 22uF] 22uF] 1uF_16W.1luF_16V
+GND
+Title D
+Size Number Revision
+A
+Date: 3/31/2026 Sheet_of
+File: LD _Controller.SchDoc Drawn By:
+3 4
+

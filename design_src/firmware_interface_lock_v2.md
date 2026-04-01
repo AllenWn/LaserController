@@ -10,6 +10,8 @@ Primary machine-readable files:
 - The lock is now **system-level**, not `MainBoard`-only.
 - `GPIO4` and `GPIO5` are no longer treated as generic expansion GPIOs.
   - They are now locked to the cross-board `STUSB4500` I2C path through the `BMS` and `PD` boards.
+- The current selected `MainBoard` stuffing option shares `STUSB4500`, `DAC`, and MainBoard `ERM` on one I2C controller.
+  - `DAC` and MainBoard `ERM` therefore move from their old dedicated candidate mappings onto the shared `GPIO4/GPIO5` bus.
 - `GPIO6` and `GPIO7` are no longer generic spare GPIOs.
   - They are now locked as cross-board lines that land on the `BMS` battery-toggle header.
 - The previous temporary assumption that `trigger` was a direct ESP32 GPIO is removed.
@@ -34,18 +36,17 @@ These are safe to use as concrete firmware interfaces now:
   - `TEC_TMO`
   - `TEC_ITEC`
   - `TEC_VTEC`
-- DAC:
-  - `DAC_SDA`
-  - `DAC_SCL`
 - IMU:
   - `IMU_SDI`
   - `IMU_CS`
   - `IMU_SCLK`
   - `IMU_SDO`
   - `IMU_INT2`
+- `DAC_SDA`
+- `DAC_SCL`
+- `ERM_SDA`
+- `ERM_SCL`
 - MainBoard haptic:
-  - `ERM_SDA`
-  - `ERM_SCL`
   - `ERM_EN`
 
 ## Locked cross-board interfaces
@@ -54,6 +55,11 @@ These are safe to use as concrete firmware interfaces now:
 
 - `GPIO4` -> `ST_SDA` -> `STUSB4500 SDA`
 - `GPIO5` -> `ST_SCL` -> `STUSB4500 SCL`
+
+Current selected design also shares this bus with:
+
+- `DAC80502`
+- MainBoard `DRV2605`
 
 This path is electrically traced through:
 
@@ -64,7 +70,8 @@ This path is electrically traced through:
 
 Firmware meaning:
 
-- The ESP32 can optionally supervise or configure the `STUSB4500`
+- The ESP32 can supervise `STUSB4500` and drive `DAC80502` on the same physical I2C bus
+- MainBoard `DRV2605` also lives on that same bus in the current stuffed design
 - USB-PD protocol ownership still remains in hardware
 
 ### BMS battery-toggle header

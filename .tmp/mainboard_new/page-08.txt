@@ -1,0 +1,53 @@
+External Connection
+
+Vin Power Bypass
+
+VIN
+
+Network
+
+72
+So
+iv
+= st
+— a 8
+NI i
+GND fre fs
+ea jaa}
+ica} Q
+VIN TP9
+B2B - VIN Board L_
+VIN
+il
+C], ESP32_S3_Module[1C] 1} oO o2 22 : ESP32_S3_Module{[1B]
+(|, ESP32_S3_Module{1C] = 03 04 | = ESP32_ $3. Module{1B] Lisi
+D], ESP32_S3_Module{1C] oF] 95 06 I-58 Connectors[2D], ESP32_S3_Module[1C] DVDD_3V3/———+J
+07 08
+09 | O9 19 Lo DVDD3V3
+TFM-105-12-L-D-A
+= TP11
+sw) NAS VDs_TEC_svob#
+VDS_TEC
+TP12
+VDS_LD_8voh——
+DVDD 3V3 VDS_LD
+B2B - Sensor & LED Board ¢ =z De
+DVDD 3V3 = ==
+2A 2B iS mE GND ||
+5 ~S GND
+= fe 212
+o, | — ° <ESP_GPIO4 > Connectors[1B], ESP32_S3_Module[1C]
+a
+Pm a = 4, + < ESP GPIO5 __»> Connectors[1B], ESP32_S3_Module[1C]
+a = S ° <ESP_GPIO6 _»> Connectors[2B], ESP32_S3_Module[1C]
+m2 m3. {DVDD_3V3
+1
+m2 10, |;GND
+FTSH-105-01-L-DV-K-TR FTSH-105-01-L-DV-K-TR
+Title
+Size Number Revision
+A
+Date: 3/31/2026 Sheet of
+File: Connectors.SchDoc Drawn By:
+1 2 3 4
+

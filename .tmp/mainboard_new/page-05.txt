@@ -1,0 +1,26 @@
+A
+DVDD 3V3
+- DVpD 3V3
+= = 2/22/88
+eles|ealecle
+e{| e{] ef] el] 3
+ot 2h So = {_IMU_INT2 > ESP32_$3_Module[3B]
+ESP32_S3_Module[3B][_IMU_CS__> IMU_CS
+IMU_SCLK
+ESP32_S3_Module[3B] |
+eee + IMU_SDI
+ESP32_S3_Module[3B]( IMU SDO_} 4—_MU,SDO
+: : : : R26
+CS is active low for SPI; actice high for 12C 10k0 (DNP)  LSM6DSOTR IL
+GND
+GND
+c
+Power Bypass Network
+DVDD 3Vv3
+Title D
+Size Number Revision
+A
+Date: 3/31/2026 Sheet_of
+File: IMU.SchDoc Drawn By:
+3 4
+

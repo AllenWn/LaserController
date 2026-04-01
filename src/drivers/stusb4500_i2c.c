@@ -58,3 +58,34 @@ esp_err_t stusb4500_i2c_write_reg8(const stusb4500_i2c_t *dev, uint8_t reg, uint
   const TickType_t timeout = pdMS_TO_TICKS(STUSB4500_I2C_TIMEOUT_MS);
   return i2c_master_write_to_device(dev->port, dev->addr_7bit, buf, sizeof(buf), timeout);
 }
+
+esp_err_t stusb4500_i2c_read_block(const stusb4500_i2c_t *dev, uint8_t reg, uint8_t *buf, size_t len)
+{
+  if (!dev || !buf || len == 0u)
+  {
+    return ESP_ERR_INVALID_ARG;
+  }
+
+  const TickType_t timeout = pdMS_TO_TICKS(STUSB4500_I2C_TIMEOUT_MS);
+  return i2c_master_write_read_device(dev->port, dev->addr_7bit, &reg, 1, buf, len, timeout);
+}
+
+esp_err_t stusb4500_i2c_write_block(const stusb4500_i2c_t *dev, uint8_t reg, const uint8_t *buf, size_t len)
+{
+  if (!dev || !buf || len == 0u)
+  {
+    return ESP_ERR_INVALID_ARG;
+  }
+
+  uint8_t tx[1 + 16];
+  if (len > 16u)
+  {
+    return ESP_ERR_INVALID_SIZE;
+  }
+
+  tx[0] = reg;
+  memcpy(&tx[1], buf, len);
+
+  const TickType_t timeout = pdMS_TO_TICKS(STUSB4500_I2C_TIMEOUT_MS);
+  return i2c_master_write_to_device(dev->port, dev->addr_7bit, tx, len + 1u, timeout);
+}

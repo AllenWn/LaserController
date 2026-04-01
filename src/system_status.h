@@ -73,10 +73,15 @@ typedef struct
 {
   bool device_present;
   bool i2c_ok;
+  bool config_applied;
   bool attached_known;
   bool attached;
   bool contract_valid_known;
   bool contract_valid;
+  bool contract_mismatch_known;
+  bool contract_mismatch;
+  bool power_ready;
+  uint8_t active_rdo_object_pos;
   bool fault_known;
   bool fault;
   TickType_t updated_at;

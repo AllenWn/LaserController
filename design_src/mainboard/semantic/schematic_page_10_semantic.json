@@ -9,8 +9,20 @@
       "pins": [
         { "pin_name": "EN", "net": "ERM_EN", "sheet_refs": ["ESP32_S3_Module[3B] ERM_EN"] },
         { "pin_name": "IN/TRIG", "net": "ERM_TRIG", "sheet_refs": ["ESP32_S3_Module[3B] ERM_TRIG"] },
-        { "pin_name": "SCL", "net": "ERM_SCL", "sheet_refs": ["ESP32_S3_Module[3B] ERM_SCL"] },
-        { "pin_name": "SDA", "net": "ERM_SDA", "sheet_refs": ["ESP32_S3_Module[3B] ERM_SDA"] },
+        {
+          "pin_name": "SCL",
+          "net": "ERM_SCL",
+          "sheet_refs": ["ESP32_S3_Module[3B] ERM_SCL"],
+          "routing_status": "shared_i2c_selected",
+          "routing_note": "MainBoard supports either dedicated or shared routing by stuffing, and the current selected design routes ERM I2C onto the shared STUSB4500/DAC bus."
+        },
+        {
+          "pin_name": "SDA",
+          "net": "ERM_SDA",
+          "sheet_refs": ["ESP32_S3_Module[3B] ERM_SDA"],
+          "routing_status": "shared_i2c_selected",
+          "routing_note": "MainBoard supports either dedicated or shared routing by stuffing, and the current selected design routes ERM I2C onto the shared STUSB4500/DAC bus."
+        },
         { "pin_name": "VDD", "net": "DVDD_3V3" },
         { "pin_name": "GND", "net": "GND" },
         { "pin_name": "OUT+", "net": "MOTOR_OUT_P" },
@@ -20,6 +32,9 @@
   ],
   "loads": [
     { "ref": "M1", "value": "HD-EMC1004-SC", "nets": ["MOTOR_OUT_P", "MOTOR_OUT_N"] }
+  ],
+  "notes_from_sheet": [
+    "MainBoard page 4 now adds resistor-stuffing options that can move ERM_SDA/ERM_SCL onto a shared I2C controller with STUSB4500 and DAC.",
+    "Current selected design uses the shared-bus stuffing option."
   ]
 }
-

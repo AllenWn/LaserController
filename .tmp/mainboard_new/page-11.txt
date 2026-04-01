@@ -1,0 +1,23 @@
+A
+VDS_TEC 5V0 DVDD 3V3
+R52 R53
+OR OR (DNP)
+U9, TP19 B
+1) vin vout ©
+R54 5190tr
+ESP32_S3_Module[3C]|_ GN LD EN > 3-1 ON g Me iit
+R55 ow)
+10k 4 2 5190tr
+<— CT (D
+Cc GN roa JL
+TPS22918DBVR = =
+=> GND GND
+GND
+Cc
+Title D
+Size Number Revision
+A
+Date: 3/31/2026 Sheet _of
+File: VisibleLaser-Switch.SchDoc Drawn By:
+il 2 3 4
+
